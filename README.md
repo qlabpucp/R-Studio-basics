@@ -14,7 +14,7 @@ Para ello, es importante que descarguen R y RStudio en sus laptops y/o PCs para 
   - `02_Taller_RStudio`: Introducción a Tidyverse y manejo de librerías.
   - `03_Taller_RStudio`: Estadística descriptiva y exploración de datos.
   - `04_Taller_RStudio`: Visualización de datos.
-  - 
+  - `05_Taller_RStudio`: Clase práctica aplicada.
 - **📊 Datasets:** Contiene las bases de datos a ser utilizadas durante el taller.
 
 ## 📆 Clases
