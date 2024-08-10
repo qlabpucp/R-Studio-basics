@@ -18,11 +18,11 @@ Para ello, es importante que descarguen R y RStudio en sus laptops y/o PCs para 
 
 ## 📚 Estructura
 - **📅 Sesiones:** Contiene las cinco sesiones del taller, detalladas a continuación:
-  - `01_Taller_RStudio`: Introducción a R Studio y R. Explicación de las características y ventajas de R Studio, instalación y configuración del entorno de trabajo
-  - `02_Taller_RStudio`: Fundamentos de programación en R. Sintaxis básica de R, tipos de datos, operadores aritméticos y lógicos.
-  - `03_Taller_RStudio`: Manipulación de datos en R. Importación de datos desde diferentes fuentes, exploración de datos, limpieza y transformación de datos.
-  - `04_Taller_RStudio`: Visualización de datos. Creación de gráficos estáticos y dinámicos utilizando paquetes como ggplot2.
-  - `05_Taller_RStudio`: Análisis estadístico básico: Introducción a técnicas estadísticas básicas utilizando R, como pruebas de hipótesis y regresión lineal simple. Clase práctica aplicada.
+  - `01_Taller_RStudio`: **Introducción a R Studio y R**. Explicación de las características y ventajas de R Studio, instalación y configuración del entorno de trabajo
+  - `02_Taller_RStudio`: **Fundamentos de programación en R**. Sintaxis básica de R, tipos de datos, operadores aritméticos y lógicos.
+  - `03_Taller_RStudio`: **Manipulación de datos en R**. Importación de datos desde diferentes fuentes, exploración de datos, limpieza y transformación de datos.
+  - `04_Taller_RStudio`: **Visualización de datos**. Creación de gráficos estáticos y dinámicos utilizando paquetes como ggplot2.
+  - `05_Taller_RStudio`: **Análisis estadístico básico**. Introducción a técnicas estadísticas básicas utilizando R, como pruebas de hipótesis y regresión lineal simple. Clase práctica aplicada.
     
 - **📊 Datasets:** Contiene las bases de datos a ser utilizadas durante el taller.
 
