@@ -2,7 +2,7 @@
 
 ## 📄 Resumen
 Este taller introductorio está dirigido a estudiantes de la Facultad de Ciencias Sociales, tanto aquellos con conocimientos básicos de programación en R Studio como para aquellos que no poseen experiencia previa en el tema. Aborda los fundamentos para el desarrollo de habilidades de programación con R Studio.
-El **objetivo principal** es proporcionar una introducción ordenada a la programación en R. Al finalizar el curso. 
+El **objetivo principal** es proporcionar una introducción ordenada a la programación en R. 
 
 Objetivos específicos:
 
