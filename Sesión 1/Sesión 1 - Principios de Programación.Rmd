@@ -1,0 +1,1009 @@
+---
+title: "Sesión 1 - R Introductorio - Qlab"
+author: "Irinnia Vargas"
+date: "2024-03-12"
+output:
+  slidy_presentation:
+     theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## LABORATORIO DE INTELIGENCIA ARTIFICIAL Y MÉTODOS COMPUTACIONALES EN CIENCIAS SOCIALES (QLAB)
+
+### TALLER INTRODUCTORIO DE R 2024-1
+
+### SESIÓN 1
+
+Contenidos:
+
+-   Conceptos básicos de programación en R
+-   Operadores y tipos de datos
+-   Estructuras de datos en R: vectores listas, matrices y data frames
+-   Instalación de paquetes y manejo de funciones
+-   Importar bases de datos
+-   Estadística descriptiva
+
+## Conceptos básicos de programación en R
+
+### Sobre Rmarkdown
+
+Se trabajará en archivos Rmarkdown (.Rmd) dado sus características:
+
+-   Facilidad de uso: Proporciona una sintaxis simple y fácil de entender para combinar texto enriquecido con fragmentos de código R.
+-   Reproducibilidad: Fomenta la reproducibilidad al permitir la inclusión de código R junto con su salida correspondiente (gráficos, tablas, etc.) en el mismo documento. Esto significa que cualquier persona puede ejecutar el código y obtener los mismos resultados.\
+-   Flexibilidad: Ofrece la capacidad de generar una amplia variedad de formatos de salida, incluyendo HTML, PDF, Word, presentaciones de diapositivas, entre otros. Esto permite adaptar el taller según las necesidades y preferencias de los participantes.
+
+### Antes de iniciar
+
+Debes saber algunas cosas importantes:
+
+#### Líneas de código
+
+Para ejecutar operaciones en Rmarkdown se tienen que generar "chunks" usando el comando Ctrl + Alt+ i. En este caso para realizar una operación:
+
+```{r echo=TRUE}
+y <- 1+1
+```
+
+#### ¿Cómo ejecutar comando o líneas?¨
+
+Presiona Ctrl + Enter \| Seleccionar y dar clic en la viñeta de Run el cual se ejecutará en el panel de la consola.
+
+#### Comentarios
+
+Puedes añadir comentarios en tu script, lo que esta junto al \# es comenario
+
+```{r echo=TRUE}
+#Es es un comentario y no interfiere en los comandos de R.
+# Son anotaciones 
+```
+
+#### R orientado a objetos
+
+Una variable puede almacenar un objeto. cuando decimos que R es un lenguaje orientado a objetos, queremos decir que permite la creación y manipulación de objetos con atributos y métodos asociados, siguiendo los principios de la programación orientada a objetos. Esto facilita la organización y el manejo de datos y funciones en el entorno de R.
+
+```{r echo=TRUE}
+ x<- 2024
+universidad <- "Pontificia Universidad Católica del Perú"
+```
+
+#### Directorio
+
+```{r echo=TRUE}
+getwd()
+```
+
+## Tipo de datos
+
+En R Studio, al igual que en el lenguaje de programación R en general, hay varios tipos de datos, operadores y variables que se utilizan comúnmente:
+
+-   Character
+-   Numeric
+-   Integer
+-   Logical
+-   Complex
+-   Factor
+
+## 1. Character: Cadenas de texto
+
+Este es un tipo de datos que representa cadenas de texto.
+
+```{r echo=TRUE}
+mi_nombre <- " Hola mi nombre es Irinnia"
+clase_1 <- "bienvenidxs a la clase 1"
+print(mi_nombre)
+print(clase_1)
+```
+
+```{r echo=TRUE}
+mensaje_completo <- paste(mi_nombre, clase_1)
+print(mensaje_completo)
+```
+
+## 2. Numeric: númericos o punto flotante (float)
+
+Se pueden realizar operaciones aritméticas, funciones matemáticas y otros cálculos con variables de tipo numeric.
+
+```{r echo=TRUE}
+mi_edad <- 23
+cuenta_caja_piura<- 20000.19898
+mi_numero <- 3.14159
+print(mi_edad)
+print(cuenta_caja_piura)
+print(mi_numero)
+```
+
+## 3. Integer: números enteros
+
+Los enteros (integer) en R son un tipo de datos que representa *números enteros* Es decir, números sin parte decimal. En contraste con los números de punto flotante (numeric), que pueden contener decimales, los enteros son números precisos y exactos.
+
+```{r echo=TRUE}
+# Definir un número entero
+mi_entero <- 10L  # El sufijo "L" indica que es un entero
+print(mi_entero)  
+
+# Operaciones aritméticas con enteros
+otro_entero <- -5L
+suma <- mi_entero + otro_entero
+resta <- mi_entero - otro_entero
+
+print(suma)         
+print(resta)         
+
+```
+
+## 4.Logical
+
+Los valores lógicos (logical) en R son fundamentales para el control de flujo y las evaluaciones condicionales en las estructuras de control como if, else, while, for, etc. También son utilizados para la indexación y subconjunción de vectores y matrices.
+
+```{r echo=TRUE}
+a <- 1 #Llamamos "a" como una variable con valor 1
+b <- 2 #Llamamos "b" como una variable con valor 2
+a < b  #¿a es menor que b? o, ¿1 es menor que 2?
+```
+
+```{r echo=TRUE}
+# Ejercicio
+verdadero <- TRUE
+falso <- FALSE
+
+# Operaciones lógicas
+resultado_and <- verdadero & falso  # Operador lógico "y"
+resultado_or <- verdadero | falso   # Operador lógico "o"
+resultado_not_verdadero <- !verdadero  # Operador lógico "no" aplicado a verdadero
+resultado_not_falso <- !falso         # Operador lógico "no" aplicado a falso
+
+# Imprimir los resultados
+print(resultado_and)             # Salida: FALSE
+print(resultado_or)              # Salida: TRUE
+print(resultado_not_verdadero)   # Salida: FALSE
+print(resultado_not_falso)       # Salida: TRUE
+```
+
+```{r echo=TRUE}
+estudiante_CCSS <- TRUE
+
+# Verificar si el estudiante está inscrito en un curso de Ciencias Sociales
+if (estudiante_CCSS) {
+  print("El estudiante está inscrito en el taller de R Intermedio.")
+} else {
+  print("El estudiante NO está inscrito en el taller de R Intermedio.")
+}
+```
+
+## 5. Complex: números complejos
+
+Este tipo de datos representa números complejos, que tienen una parte real y una parte imaginaria. Por ejemplo, 1+2i es un valor de tipo complex
+
+```{r echo=TRUE}
+# Definir números complejos
+numero_complejo_1 <- 3 + 2i
+numero_complejo_2 <- -1 - 4i
+
+# Imprimir los números complejos
+print(numero_complejo_1)  # Salida: 3+2i
+print(numero_complejo_2)  # Salida: -1-4i
+```
+
+## 6. Factor
+
+Los factores son una estructura de datos especial en R que se utiliza para representar variables categóricas con un número finito de niveles o categorías. Los factores son útiles en análisis estadístico y gráfico.
+
+```{r echo=TRUE}
+# Crear un vector con datos categóricos
+niveles <- c("Bajo", "Medio", "Alto", "Medio", "Bajo")
+
+# Convertir el vector en un factor con niveles específicos
+factor_niveles <- factor(niveles, levels = c("Bajo", "Medio", "Alto"))
+
+# Imprimir el factor
+print(factor_niveles)
+
+```
+
+```{r echo=TRUE}
+# Crear un vector con datos categóricos
+genero <- c("Femenino", "Masculino", "No Binario")
+
+# Convertir el vector en un factor
+factor_genero <- factor(genero)
+
+# Imprimir el factor
+print(factor_genero)
+```
+
+## Sobre los NA y NULL
+
+-   En R, usamos NA para representar *datos perdidos*, mientras que NULL representa la *ausencia de datos*.
+-   La diferencia entre las dos es que un dato NULL aparece sólo cuando R intenta recuperar un dato y no encuentra nada, mientras que NA es usado para representar explícitamente *datos perdidos, omitidos o que por alguna razón son faltantes*.
+-   Por ejemplo, si tratamos de recuperar la edad de una persona encuestada que no existe, obtendríamos un NULL, pues no hay ningún dato que corresponda con ello. En cambio, si tratamos de recuperar su estado civil, y la persona encuestada no contestó esta pregunta, obtendríamos un NA.
+-   NA además puede aparecer como resultado de una operación realizada, pero no tuvo éxito en su ejecución.
+
+```{r echo=TRUE}
+# Crear un vector con NA
+vector_con_na <- c(1, NA, 3, 4)
+
+# Verificar si hay NA en el vector
+is.na(vector_con_na)  # Devuelve TRUE FALSE TRUE FALSE
+
+# Eliminar filas con NA en un dataframe
+datos <- data.frame(a = c(1, 2, NA), b = c(NA, 4, 5))
+datos_sin_na <- na.omit(datos)
+
+# Reemplazar NA en un vector
+vector_con_na[is.na(vector_con_na)] <- 0
+
+# Verificar si un objeto es NULL
+x <- NULL
+is.null(x)  # Devuelve TRUE
+
+# Eliminar un objeto del entorno de trabajo
+rm(vector_con_na)
+
+```
+
+## Operadores
+
+### Operadres básicos
+
+```{r echo=FALSE}
+# Crear un marco de datos con los operadores básicos
+operadores <- data.frame(
+  Operación = c("Suma", "Resta", "Multiplicación", "División", "Potencia", "Módulo"),
+  Símbolo = c("+", "-", "*", "/", "^", "%%"),
+  Ejemplo = c("3 + 2", "5 - 3", "4 * 6", "8 / 2", "2^3", "10 %% 3")
+)
+
+# Imprimir el marco de datos
+print(operadores)
+
+```
+
+*Aclaración*: El operador de módulo, representado en R por %%, devuelve el resto de la división entera de un número por otro. Es decir, si tienes dos números a y b, el operador de módulo a %% b devuelve el resto de dividir a entre b.
+
+Por ejemplo:
+
+10 %% 3 devuelve 1, ya que al dividir 10 entre 3, el cociente es 3 con un resto de 1. 15 %% 4 devuelve 3, ya que al dividir 15 entre 4, el cociente es 3 con un resto de 3.
+
+### Operadores de relaciones
+
+```{r echo=FALSE}
+# Crear un marco de datos con los símbolos matemáticos de relaciones y ejemplos
+simbolos_relaciones <- data.frame(
+  Significado = c("Igual", "Aproximado", "No igual", "Mayor que", "Menor que", "Mayor o igual que", "Menor o igual que"),
+  Símbolo = c("=", "≈", "≠", ">", "<", "≥", "≤"),
+  Ejemplo = c("2 = 2", "π ≈ 3.14", "3 ≠ 5", "5 > 3", "3 < 5", "5 ≥ 5", "3 ≤ 4")
+)
+
+# Imprimir el marco de datos
+print(simbolos_relaciones)
+
+```
+
+## Validación de datos
+
+Algunas técnicas comunes de validación de datos en R incluyen:
+
+1.  Verificación de tipos de datos: Asegurarse de que las variables tengan el tipo de datos correcto (numérico, categórico, fecha, etc.).
+
+2.  Detección de valores atípicos: Identificar y manejar valores que están significativamente fuera del rango esperado o que podrían ser errores de entrada.
+
+3.  Validación de rangos y límites: Verificar que los valores estén dentro de rangos válidos y límites establecidos.
+
+4.  Consistencia de datos: Asegurarse de que los datos sean consistentes entre sí y con los estándares establecidos.
+
+```{r echo=FALSE}
+# Crear el data frame
+validacion_datos <- data.frame(
+  Función = c("is.integer()", "is.numeric()", "is.character()", "is.factor()", "is.logical()", "is.na()", "is.null()"),
+  "Tipo que verifican" = c("Entero", "Numérico", "Cadena de texto", "Factor", "Lógico", "NA", "NULL")
+)
+
+# Imprimir el data frame
+print(validacion_datos)
+
+```
+
+## Ejemplos
+
+```{r echo=TRUE}
+# Ejemplo 1: Verificar si un vector contiene solo valores numéricos
+datos_numericos <- c(1, 2, 3, 4, 5)
+print(all(is.numeric(datos_numericos)))  
+
+# Ejemplo 2: Verificar si un vector tiene datos faltantes (NA)
+datos_con_na <- c(1, 2, NA, 4, 5)
+print(any(is.na(datos_con_na))) 
+
+```
+
+```{r echo=TRUE}
+# Ejemplo 3: Verificar si un vector contiene solo valores lógicos
+datos_logicos <- c(TRUE, FALSE, TRUE)
+print(all(is.logical(datos_logicos))) 
+
+# Ejemplo 4: Verificar si un vector es un factor
+datos_factor <- factor(c("rojo", "azul", "verde"))
+print(all(is.factor(datos_factor)))  
+
+# Ejemplo 5: Verificar si un vector contiene solo valores de caracteres
+datos_caracter <- c("a", "b", "c")
+print(all(is.character(datos_caracter)))  
+```
+
+## Estructuras de de datos
+
+### Vectores
+
+Un vector en R es una estructura de datos que contiene elementos del mismo tipo. Puede ser un conjunto ordenado de números, caracteres, lógicos u otros vectores. Los elementos de un vector están indexados, lo que significa que cada elemento puede ser identificado por su posición en el vector.
+
+Los vectores en R pueden ser de diferentes tipos:
+
+-   Numéricos
+-   Caracteres
+-   Lógicos
+-   Factores
+-   Fechas
+
+Los vectores en R son fundamentales para almacenar y manipular datos. Se pueden crear directamente utilizando la función c() para concatenar elementos, o mediante funciones específicas para generar secuencias de números, caracteres, etc. Los vectores pueden ser utilizados en operaciones aritméticas, funciones estadísticas, graficación y otros análisis de datos en R.
+
+## Vector numérico
+
+Contienen valores numéricos, como enteros o decimales.
+
+```{r echo=TRUE}
+# Vector numérico simple
+vector_numerico <- c(1, 2, 3, 4, 5)
+
+# Vector numérico con valores decimales
+vector_decimal <- c(3.14, 2.718, 1.618)
+
+# Vector numérico con operaciones
+vector_operaciones <- c(10 * 2, sqrt(25), 7^2)
+
+```
+
+## Vector de caractéres:
+
+Contienen cadenas de caracteres, es decir, texto.
+
+```{r echo=TRUE}
+# Vector de caracteres
+vector_caracteres <- c("rojo", "azul", "verde")
+
+# Vector de caracteres con nombres
+vector_con_nombres <- c("nombre1" = "Juan", "nombre2" = "María", "nombre3" = "Pedro")
+
+```
+
+## Vector lógico:
+
+Contienen valores lógicos, que pueden ser TRUE o FALSE.
+
+```{r echo=TRUE}
+# Vector lógico simple
+vector_logico <- c(TRUE, FALSE, TRUE, TRUE)
+
+# Vector lógico con operaciones
+vector_condicional <- c(5 > 3, 10 == 2, !TRUE)
+vector_condicional
+```
+
+## Vector de factores
+
+### Vector de factores para variables categóricas
+
+```{r echo=TRUE}
+# Crear un vector de factores
+vector_factores <- factor(c("rojo", "azul", "verde", "rojo", "verde"))
+str(vector_factores)
+print(vector_factores)
+```
+
+```{r echo=TRUE}
+#Régimen político
+régimen_político <- factor(c("Autoritarismo", "Democracia", "Totalitarismo", "Monarquía", "Democracia", "Autoritarismo", "Autoritarismo"))
+str(régimen_político)
+print(régimen_político)
+```
+
+*Régimen político*: R almacena este vector como (1,2,4,3,2,1,1) y lo asocia con 1= "Autoritarismo", 2= "Democracia", 3= "Monarquía" y 4="Totalitarismo". Esta asignación se realiza de manera automática y en orden alfabético.
+
+```{r echo=TRUE}
+table<- table(régimen_político)
+summary(régimen_político)
+```
+
+### Vector de factores para variables categóricas ordinales
+
+#### Ejemplos
+
+```{r echo=TRUE}
+
+vector_ordinal <- factor(c("bajo", "medio", "alto", "bajo", "alto"),
+                         levels = c("bajo", "medio", "alto"),
+                         ordered = TRUE) #Orden específico
+
+nivel_socieconómico <- factor(c("Pobreza extrema", "Pobreza", "Clase media baja", "Clase media", "Clase media alta", "Clase alta"))
+str(nivel_socieconómico)
+
+```
+
+##### Imprimir el vector de factores
+
+```{r echo=TRUE}
+print(vector_ordinal)
+print(nivel_socieconómico)
+```
+
+## Vectores con NA
+
+### Vector numérico con NA
+
+```{r echo=TRUE}
+vector_con_na <- c(1, NA, 3, 4, NA)
+```
+
+### Vector de caracteres con NA
+
+```{r echo=TRUE}
+vector_caracteres_na <- c("a", "b", NA, "d")
+```
+
+## Vectores de Fechas
+
+```{r echo=TRUE}
+
+vector_fechas <- as.Date(c("2022-01-01", "2022-02-01", "2022-03-01"))
+print(vector_fechas)
+```
+
+## Funciones de vectores:
+
+### Regiones con mayor población en Perú
+
+```{r echo=TRUE}
+regiones_may<- c("Lima", "La Libertad", "Piura", "Cajamarca", "Puno") # Cocentran el 53% de la población total
+abr_may <- c("LIM", "LAL", "PIU", "CAJ", "PUN")
+
+pob_mil_may <- c(9985664, 1882405, 1858617, 1533783, 1429098)
+```
+
+### Regiones con menor población en Perú
+
+```{r echo=TRUE}
+regiones_men <- c("Madre de Dios", "Moquegua", "Tumbes", "Pasco")
+pob_mil_men <- c(141070, 174863, 224863, 254065)
+```
+
+### Algunas funciones:
+
+```{r echo=TRUE}
+length(regiones_may) #Longitud del vector
+```
+
+```{r echo=TRUE}
+regiones_may[2:3] #Extraer información del vector
+```
+
+```{r echo=TRUE}
+pob_mil_may - pob_mil_men #Transformar vectores
+```
+
+```{r echo=TRUE}
+is.vector(regiones_may) #Validar vector
+```
+
+## Matrices
+
+Una matriz en matemáticas y programación es una estructura de datos bidimensional compuesta por filas y columnas, donde cada elemento está dispuesto en una posición única definida por su fila y columna. En una matriz, todos los elementos deben ser del mismo tipo de datos, mientras que en un data frame, cada columna puede contener diferentes tipos de datos.
+
+### Ejemplo:
+
+```{r echo=TRUE}
+#Crear una matriz
+matriz_1 <- matrix(
+  c(1, 2, 3, 4, 5, 6),  # Datos de la matriz
+  nrow = 2,             # Número de filas
+  ncol = 3)
+matriz_1
+```
+
+```{r echo=TRUE}
+# Crear una matriz 3x3
+matriz_2 <- matrix(1:9, nrow = 3, ncol = 3)
+
+# Ver la matriz
+print(matriz_2)
+
+# Acceder a elementos de la matriz
+print(matriz_2[2, 3])  # Fila 2, Columna 3
+
+```
+
+## Matrices mixtas
+
+Una matriz mixta es una estructura de datos bidimensional en la que diferentes columnas pueden contener diferentes tipos de datos. Esto significa que algunas columnas pueden contener números, mientras que otras pueden contener texto u otros tipos de datos
+
+*Continuando con nuestro ejemplo anterior:*
+
+```{r echo=TRUE}
+matrix_regiones_may<- matrix(c(abr_may, regiones_may, pob_mil_may),
+nrow = 5,
+ncol = 3)
+matrix_regiones_may
+```
+
+*Agregamos el nombre de las columnas*
+
+```{r echo=TRUE}
+colnames(matrix_regiones_may)<-c("Abreviatura", "Región", "Población")
+rownames(matrix_regiones_may)<-c(1, 2, 3, 4, 5)
+matrix_regiones_may
+```
+
+## Funciones con matrices
+
+### elección de una fila (pob)
+
+```{r echo=TRUE}
+matrix_regiones_may[4,] 
+```
+
+### Selección de una fila (pob)
+
+```{r echo=TRUE}
+matrix_regiones_may[,3] 
+```
+
+### Seleccionar un elemento en especifico
+
+```{r echo=TRUE}
+matrix_regiones_may [4,2] 
+```
+
+## Recapitulando
+
+Hemos visto: - Objeto: espacio para guardar un objeto. Tipo de dato: tipo de valor que puede ser almacenado y manipulado por el lenguaje de programación. - Variables: Cuando asignas un valor a una variable en R, esa variable toma el tipo de dato del valor que le asignas. - Vectores: una o más variable del mismo tipo de datos. - Matrices: varias columnas/vectores del mismo tipo de datos. ¿qué sigue?
+
+## Listas
+
+¿Qué es una lista?
+
+-   En R, una lista es una estructura de datos que puede contener un conjunto de elementos de diferentes tipos, como números, caracteres, valores lógicos, otros vectores, matrices o incluso otras listas.
+-   A diferencia de los vectores, donde todos los elementos deben ser del mismo tipo, en una lista los elementos pueden ser de diferentes tipos.
+
+### Creación de una lista:
+
+Puedes crear una lista utilizando la función list() y pasando los elementos que deseas incluir en la lista como argumentos de la función. Por ejemplo:
+
+```{r echo=TRUE}
+mi_lista <- list(1, "Hola", TRUE, c(2, 4, 6))
+
+# Crear una lista con diferentes tipos de elementos
+mis_datos <- list(nombre = "Irinnia", edad = 30, notas = c(85, 90, 78), casado = FALSE)
+
+```
+
+```{r}
+#Crear una lista con elementos del mismo tipo
+una_lista <- list(1, 2, 3, 1, 2, 3)
+
+# Mostrar la lista
+print(una_lista)
+
+```
+
+### Acceso a elementos de la lista:
+
+Puedes acceder a los elementos de una lista utilizando el operador \$ seguido del nombre del elemento. Por ejemplo:
+
+```{r echo=TRUE}
+# Acceder al primer elemento de la lista
+print(mi_lista[[2]])
+
+# Acceder a los elementos de la lista
+print(mis_datos$nombre)
+print(mis_datos$casado)
+
+```
+
+### Agregar y eliminar elementos de la lista:
+
+Puedes agregar nuevos elementos a una lista asignándoles un valor utilizando el operador \$. Por ejemplo:
+
+```{r echo=TRUE}
+# Agregar un nuevo elemento a la lista
+mis_datos$Tipo_sangre <- "0+"
+print(mis_datos)
+```
+
+Puedes eliminar elementos de una lista asignándoles el valor NULL. Por ejemplo:
+
+```{r echo=TRUE}
+# Eliminar un elemento de la lista
+mis_datos$notas <- NULL
+print(mis_datos$notas)
+```
+
+### Longitud de una lista:
+
+Puedes obtener la longitud de una lista utilizando la función length(). Por ejemplo:
+
+```{r echo=TRUE}
+longitud <- length(mis_datos)
+print(longitud)
+
+```
+
+### Modificar los datos de una lista:
+
+```{r echo=TRUE}
+mis_datos$nombre <- "Carmen"
+mis_datos$edad <- "23"
+print(mis_datos)
+```
+
+## Data frames
+
+-   Un data frame es una estructura de datos tabular en R que se utiliza para almacenar conjuntos de datos bidimensionales, donde las filas representan observaciones y las columnas representan variables.
+
+Puedes crear un data frame utilizando la función data.frame() y proporcionando los datos para cada variable. Por ejemplo:
+
+Añadimos columna TRUE - FALSE
+
+```{r echo=TRUE}
+pobreza_may <- c(T, F, F, T, T)
+```
+
+```{r echo=TRUE}
+df_regiones_may <- data.frame(abr_may,
+                        regiones_may,
+                        pob_mil_may,
+                        pobreza_may)
+df_regiones_may
+```
+
+## Propiedades de los Data Frames
+
+### Nombre de las columnas
+
+```{r echo=TRUE}
+colnames(df_regiones_may)
+```
+
+### Nombre de las filas
+
+```{r echo=TRUE}
+rownames(df_regiones_may)
+```
+
+### Cambiar los nombres de las columnas
+
+```{r echo=TRUE}
+colnames(df_regiones_may) <- c("Abreviatura", "Región", "Población", "Pobreza")
+print(df_regiones_may)
+```
+
+### Número de filas y columnas
+
+```{r echo=TRUE}
+# Obtener el número de filas
+num_filas <- nrow(df_regiones_may)
+
+# Obtener el número de columnas
+num_columnas <- ncol(df_regiones_may)
+
+print(num_filas)
+print(num_columnas)
+```
+
+### Dimensiones
+
+```{r echo=TRUE}
+dim(df_regiones_may)
+```
+
+### Encabezado
+
+```{r echo=TRUE}
+head(df_regiones_may, 2)
+```
+
+### Final
+
+```{r echo=TRUE}
+tail(df_regiones_may, 1)
+```
+
+### Ordenar
+
+```{r echo=TRUE}
+df_ordenado <- df_regiones_may[order(df_regiones_may$Población), ]
+df_ordenado
+```
+
+### Summary
+
+La función summary() provee salidas para cada variable dependiendo del tipo de datos
+
+```{r echo=TRUE}
+summary(df_regiones_may)
+```
+
+## Resumen
+
+Hemos aprendido acerca de:
+
+-   R y R Studio
+-   Tipos y estructuras de datos
+-   Operaciones, propiedades y funciones
+-   Introducción a los dataframes
+
+
+
+## Instalación de paquetes
+
+En R, los paquetes se pueden instalar utilizando la función *install.packages()*. 
+Por ejemplo:
+
+```{r}
+# install.packages("tidyverse")
+# install.packages("openxlsx")
+# install.packages("rio")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("data.table")
+# install.packages("DescTools")
+# install.packages("readxl")
+# install.packages("readr")
+# install.packages("reshape2")
+# install.packages("MASS")
+# install.packages("car")
+# install.packages("forecast")
+# install.packages("psych")
+# install.packages("pacman")
+# install.packages("foreign") #Abrir base de datos (usa un punto)
+# install.packages("haven") #Abrir base de datos (usa un _)
+```
+
+```{r}
+# Cargar múltiples paquetes y llamar a las librerías
+library(pacman)
+p_load(tidyverse, DescTools, foreign, dplyr, haven, openxlsx, jsonlite)
+```
+
+Llamar a las funciones de las librerías:
+*paquete::función*
+
+## Importar bases de datos 
+
+### Archivo Excel (XLSX):
+
+Función: read_excel() del paquete readxl.
+Ejemplo: readxl::read_excel("archivo.xlsx")
+
+```{r}
+readxl::read_excel("Data EconoFreedom.xlsx")
+```
+
+
+
+### Archivo de valores separados por comas (CSV):
+
+Función: read_csv() del paquete readr (parte de tidyverse).
+Ejemplo: readr::read_csv("archivo.csv")
+```{r}
+readr::read_csv("Data_forcats.csv")
+```
+
+
+### Archivo de valores separados por tabulaciones (TSV):
+
+Función: read_tsv() del paquete readr (parte de tidyverse).
+Ejemplo: readr::read_tsv("archivo.tsv")
+
+### Archivo de datos de Stata (DTA):
+
+Función: read_dta() del paquete haven.
+Ejemplo: haven::read_dta("archivo.dta")
+```{r}
+haven::read_dta("card.dta")
+```
+
+
+### Archivo de datos de SPSS (SAV):
+
+Función: read_sav() del paquete haven.
+Ejemplo: haven::read_sav("archivo.sav")
+```{r}
+haven::read_sav("sub_lapop.sav")
+```
+
+
+### Archivo JSON (JavaScript Object Notation):
+
+Función: fromJSON() del paquete jsonlite.
+Ejemplo: jsonlite::fromJSON("archivo.json")
+
+### Archivo XML (Extensible Markup Language):
+
+Función: xml2::read_xml() del paquete xml2.
+Ejemplo: xml2::read_xml("archivo.xml")
+
+### Archivo de texto plano (TXT):
+
+Función: readLines() para leer líneas de texto en un vector.
+Ejemplo: readLines("archivo.txt")
+
+
+### Archivo DBF
+Función read.dbf() del paquete foreign
+Ejemplo: read.dbf("archivo.dbf")
+
+## Sobre el paquete rio
+El paquete rio es particularmente útil porque:
+
+Interfaz unificada: Proporciona una sola función, import() y export(), que puede 
+manejar múltiples tipos de formatos de archivo. Esto simplifica el proceso de 
+importación y exportación, ya que no tienes que recordar diferentes funciones 
+para cada formato.
+
+Soporte para múltiples formatos: rio puede manejar una variedad de formatos de 
+archivo, incluyendo CSV, XLSX, SPSS, Stata, SAS, JSON, y más. Esto lo hace muy 
+versátil y conveniente para trabajar con diferentes tipos de datos.
+
+## Exportar bases de datos 
+
+### Cargar la base de datos (por ejemplo, mtcars)
+
+```{r}
+#install.packages("mtcars")
+data_1 <- mtcars
+```
+
+```{r}
+library(expss)
+data_1 = apply_labels(data_1,
+                      mpg = "Miles/(US) gallon",
+                      cyl = "Number of cylinders",
+                      disp = "Displacement (cu.in.)",
+                      hp = "Gross horsepower",
+                      drat = "Rear axle ratio",
+                      wt = "Weight (1000 lbs)",
+                      qsec = "1/4 mile time",
+                      vs = "Engine",
+                      vs = c("V-engine" = 0,
+                             "Straight engine" = 1),
+                      am = "Transmission",
+                      am = c("Automatic" = 0,
+                             "Manual"=1),
+                      gear = "Number of forward gears",
+                      carb = "Number of carburetors"
+)
+```
+
+
+
+### Exportar la base de datos a diferentes formatos
+
+```{r}
+write.csv(data_1, "mtcars.csv", row.names = FALSE)
+write.xlsx(data_1, "mtcars.xlsx")
+write.dta(data_1, "mtcars.dta")
+write_sav(data_1, "mtcars.sav")
+write_json(data_1, "mtcars.json")
+```
+
+
+
+## Base de datos para esta clase: WDI
+- El Banco Mundial(WDI) proporciona datos abiertos para cientos de indicadores económicos y sociales de una amplia gama de países en todo el mundo. Estos indicadores están disponibles para la mayoría de los países y abarcan muchos años. Puede obtener más información en 
+https://data.worldbank.org/
+
+
+### Buscar variables 
+```{r}
+library(WDI)
+WDIsearch(string = "maternal mortality ratio",
+          field = "name",
+          short = FALSE)
+```
+
+## Selección de variables
+
+```{r}
+example <- WDI(indicator =c("EN.ATM.CO2E.PC" , "NY.GDP.PCAP.CD"), extra=TRUE)
+```
+
+```{r}
+df <- data.frame(
+WDI( country = c("US", "DE", "NG", "BR"),
+    indicator = c("NY.GDP.PCAP.CD", "SP.DYN.LE00.IN", "SP.POP.TOTL", "SH.STA.MMRT"),
+    start = 2005,
+    end = 2015,
+    extra = FALSE))
+
+# Filtrar los datos para eliminar filas con valores NA
+df <- na.omit(df)
+```
+
+
+### Variables específicas:
+
+a. NY.GDP.PCAP.CD:
+
+Nombre completo: GDP per capita (current US$)
+Descripción: El Producto Interno Bruto (PIB) per cápita es una medida del ingreso 
+promedio por persona en un país en un año determinado, expresado en dólares 
+estadounidenses corrientes.
+Uso común: El PIB per cápita se utiliza para comparar el nivel de desarrollo 
+económico entre países y a lo largo del tiempo.
+
+b. SP.DYN.LE00.IN:
+
+Nombre completo: Life expectancy at birth, total (years)
+Descripción: La esperanza de vida al nacer es el número promedio de años que se 
+espera que viva una persona al nacer, basado en las tasas de mortalidad actuales.
+Uso común: La esperanza de vida al nacer es un indicador importante del nivel de 
+salud y bienestar de la población de un país.
+
+
+c. SP.POP.TOTL:
+
+Nombre completo: Population, total
+Descripción: La población total es la cantidad total de personas que residen en 
+un país en un momento dado.
+Uso común: La población total es un indicador clave para comprender el tamaño y 
+la composición de la población de un país, así como para realizar proyecciones 
+demográficas y planificación de políticas.
+
+
+d. SH.STA.MMRT:
+
+Nombre completo: Mortality rate, maternal (per 100,000 live births)
+Descripción: La tasa de mortalidad materna es el número de muertes maternas relacionadas 
+con el embarazo, el parto y el puerperio en un año determinado, por cada 100,000 nacidos 
+vivos en el mismo año.
+
+Uso común: La tasa de mortalidad materna es un indicador crítico de la salud materna 
+y reproductiva de una población, y es un objetivo importante para la mejora de la 
+salud pública y la atención médica.
+
+
+## Configurar
+
+Data frame: example
+```{r}
+# Cambiar el nombre de la variable "EN.ATM.CO2E.PC" a "CO2"
+names(example)[names(example) == "EN.ATM.CO2E.PC"] <- "CO2"
+
+# Cambiar el nombre de la variable "NY.GDP.PCAP.CD" a "GDP_per"
+names(example)[names(example) == "NY.GDP.PCAP.CD"] <- "GDP_per"
+
+```
+
+Data frame: df
+```{r}
+names(df)[names(df) == "NY.GDP.PCAP.CD"] <- "GDP_per"
+names(df)[names(df) == "SP.DYN.LE00.IN"] <- "LIFE_exp"
+names(df)[names(df) == "SP.POP.TOTL"] <- "Population"
+names(df)[names(df) == "SH.STA.MMRT"] <- "Mother_mortality"
+```
+
+```{r}
+library(expss)
+use_labels(example, plot(CO2~GDP_per))
+```
+
+
+## Antes de empezar
+
+Explorar de manera general:
+```{r}
+summary(df)
+summary(example)
+```
