@@ -1,0 +1,734 @@
+---
+title: "Sesión3-Qlab"
+author: "Michael Encalada"
+date: "2023-08-30"
+output:
+  slidy_presentation:
+      widescreen: true
+---
+## LABORATORIO DE INTELIGENCIA ARTIFICIAL Y MÉTODOS COMPUTACIONALES EN CIENCIAS SOCIALES (QLAB)
+
+### TALLER INTRODUCTORIO DE R 2024-1
+
+### SESIÓN 3
+
+**Contenidos de la sesión**
+
+Visualización de datos:
+- Creación de gráficos usando ggplot2
+- Interpretación de gráficos
+- Personalización de gráficos
+
+Introducción a la visualización de datos espaciales
+- Importación y manipulación de datos espaciales
+- Creación y personalización de mapas
+
+# Visualización de Datos
+
+## Tablas
+
+### Datos: GAPMINDER
+- Gapminder es una base de datos que contiene información demográfica, económica y 
+de salud de diferentes países de todo el mundo.
+- Creada por el profesor Hans Rosling y su equipo, su objetivo es proporcionar 
+datos actualizados y accesibles para comprender la situación global en términos 
+de desarrollo humano.
+- Incluye variables como esperanza de vida, PIB per cápita y población
+
+- Los datos de Gapminder son ampliamente utilizados en análisis estadísticos, 
+visualizaciones y estudios relacionados con el desarrollo humano, la salud pública, 
+la economía y la sociología, entre otros campos.
+- Es una valiosa fuente de datos que permite realizar análisis comparativos y 
+comprender mejor los cambios y las tendencias a lo largo del tiempo.
+
+```{r setup, include=FALSE}
+library(pacman)
+pacman::p_load(dplyr, ggplot2, tidyr, knitr, rio, haven,foreign, psych, reshape2, Hmisc, forcats)
+```
+
+```{r}
+library(gapminder)
+library(dplyr)
+data<-gapminder 
+```
+
+### Tabla de Frecuencias
+Vamos a crear una tabla de frecuencias para la variable continent para ver cómo se distribuyen los registros entre los diferentes continentes.
+
+```{r}
+# Creando una tabla de frecuencias para la variable 'continent'
+tabla_frecuencias <- data %>%
+  group_by(continent) %>%
+  summarise(Frecuencia = n())
+
+print(tabla_frecuencias)
+
+```
+
+Para hacer la tabla de frecuencias más interactiva y visualmente atractiva, puedes emplear el paquete DT de R, el cual es especialmente útil para documentos R Markdown que se compilan en HTML. Las tablas interactivas proporcionadas por DT permiten a los usuarios ordenar, filtrar y examinar los datos de forma más dinámica. Aquí te muestro cómo hacerlo:
+
+```{r}
+library(DT)
+library(dplyr)
+
+# Asegúrate de que tu data frame 'data' contiene la columna 'continent'
+# y luego crea la tabla de frecuencias
+tabla_frecuencias <- data %>%
+  group_by(continent) %>%
+  summarise(Frecuencia = n())
+
+# Hacer la tabla de frecuencias interactiva
+datatable(
+  tabla_frecuencias,
+  options = list(pageLength = 5),  # Cambia esto según necesites
+  caption = "Tabla de Frecuencias por Continente"
+)
+
+```
+
+
+### Tablas de Contingencia (Cruce de Variables)
+Ahora, crearemos una tabla de contingencia entre continent y year para ver la distribución de los registros a lo largo de los años por continente.
+
+```{r}
+# Creando una tabla de contingencia entre 'continent' y 'year'
+tabla_contingencia <- table(data$continent, data$year)
+
+print(tabla_contingencia)
+
+```
+
+Para hacer tus tablas de contingencia más atractivas y fáciles de interpretar en R, puedes considerar el uso de paquetes adicionales como kable del paquete knitr, DT para tablas dinámicas interactivas, o incluso formattable para agregar algo de estilo a las cifras. A continuación, te mostraré cómo puedes extender la sección de tablas de contingencia utilizando estos paquetes.
+
+#### Usando kable de knitr
+kable produce tablas simples pero elegantes, perfectas para documentos Markdown y HTML.
+```{r}
+library(knitr)
+
+# Usando kable para generar una tabla bonita
+kable(tabla_contingencia, caption = "Distribución de registros por año y continente")
+```
+
+#### Usando DT para una Tabla Interactiva
+Si estás creando un documento R Markdown que se renderizará en HTML, puedes hacer que tus tablas de contingencia sean interactivas utilizando el paquete DT. Esto es particularmente útil para explorar grandes conjuntos de datos.
+```{r}
+library(DT)
+
+# Convertir la tabla de contingencia en un data frame para DT
+tabla_contingencia_df <- as.data.frame.matrix(tabla_contingencia)
+
+# Hacer la tabla interactiva
+datatable(tabla_contingencia_df, options = list(pageLength = 5), 
+          caption = 'Distribución de registros por año y continente')
+
+```
+
+#### Usando formattable para Estilizar Tablas
+formattable te permite añadir condicionales de color, barras de progreso y otros elementos estilísticos a tus tablas, lo cual puede ser muy útil para resaltar datos importantes o patrones.
+
+```{r}
+library(formattable)
+
+# Convertir la tabla de contingencia en un data frame para formattable
+tabla_contingencia_df <- as.data.frame.matrix(tabla_contingencia)
+
+# Aplicar formattable para añadir estilos
+formattable(tabla_contingencia_df, list(
+  area(col = 1:nrow(tabla_contingencia_df)) ~ color_tile("white", "lightblue")
+))
+
+```
+
+
+### Gráfico de Barras con ggplot2
+Vamos a generar un gráfico de barras para visualizar el número de países por continente en la base de datos gapminder.
+
+```{r}
+library(ggplot2)
+
+# Creando un gráfico de barras para la cantidad de países por continente
+ggplot(data = data, aes(x = continent)) +
+  geom_bar() +
+  theme_minimal() +
+  labs(title = "Número de Países por Continente en Gapminder", x = "Continente", y = "Cantidad de Países")
+
+```
+
+# Graficos usando gapminder
+
+```{r}
+gapminder %>% 
+  filter(continent=="Europe", year== 1952)
+```
+
+```{r}
+dos_continentes <- 
+  gapminder %>% 
+  filter(continent=="Asia"| (continent=="America"))
+```
+
+```{r}
+gapminder %>% 
+  filter(continent=="Europe"| (continent=="Asia"&  year==2005))
+```
+
+```{r}
+gapminder %>% 
+  mutate(gdp=gdpPercap*pop)
+```
+```{r}
+gapminder %>% filter(gdpPercap<500) %>% 
+  mutate(gdp=gdpPercap*pop)
+```
+Manera tradicional:
+```{r}
+gapminder$gdp<- gapminder$gdpPercap* gapminder$pop
+```
+
+```{r}
+gapminder %>% filter(continent=="Africa") %>% 
+  group_by(year) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = TRUE))#ignora a los NAS
+```
+```{r}
+gapminder %>% filter(continent=="Africa") %>% 
+  group_by(country) %>% 
+  summarise(exp_mean=mean(gdpPercap, na.rm = T), exp_median=median(gdpPercap, na.rm= T),
+            exp_sd=sd(gdpPercap, na.rm= T))
+```
+
+Agrupar por más de un criterio:
+```{r}
+library(dplyr)
+gapminder %>%  group_by(year, continent) %>% 
+  summarise(exp_mean=mean(lifeExp, na.rm = T), exp_median=median(lifeExp, na.rm= T),
+            exp_sd=sd(lifeExp, na.rm= T)) %>% 
+  arrange(desc(exp_mean))
+```
+
+## Gráficos simples
+
+### Histograma
+```{r}
+hist(data$lifeExp, main = "Histograma de la expectativa de vida en el mundo", xlab="Expectativa de vida", ylab="Frecuencia")
+```
+
+
+
+### Diagrama de cajas
+
+```{r}
+boxplot(data$gdpPercap)
+```
+
+
+```{r}
+boxplot(data$gdpPercap ~ data$continent, col = rainbow(ncol(trees)))
+```
+### Gráfico de dispersión
+```{r}
+plot(gapminder$gdpPercap, gapminder$lifeExp)
+```
+## Gráficos con ggplpt2
+
+### Gramática de los gráficos
+
+```{r}
+
+parametros_ggplot <- data.frame(
+  Parametro = c("data", "mapping", "geom", "aes", "size", "color", "fill", "alpha", 
+                "shape", "linetype", "facet_wrap", "facet_grid", "theme", "labs", 
+                "ggtitle", "xlab", "ylab", "scale_*", "coord_*"),
+  Ejemplo = c("iris", "aes(x = Sepal.Length, y = Petal.Length)", "geom_point()", 
+              "aes(color = Species)", "size = 3", "color = 'red'", "fill = 'blue'", 
+              "alpha = 0.5", "shape = 16", "linetype = 'dashed'", "facet_wrap(~Species)", 
+              "facet_grid(. ~ Species)", "theme_bw()", "labs(x = 'Longitud del Sépalo', y = 'Longitud del Pétalo')", 
+              "ggtitle('Gráfico de dispersión')", "xlab('Longitud del Sépalo')", "ylab('Longitud del Pétalo')", 
+              "scale_y_continuous(limits = c(0, 10))", "coord_flip()"),
+  stringsAsFactors = FALSE
+)
+
+# Imprimir la tabla
+print(parametros_ggplot)
+
+```
+
+### Sobre geom
+```{r}
+tipos_geom <- data.frame(
+  Tipo = c("geom_point", "geom_line", "geom_bar", "geom_histogram", "geom_boxplot", "geom_smooth"),
+  Descripción = c("Gráfico de puntos para visualizar datos individuales.",
+                  "Gráfico de líneas para visualizar tendencias o conexiones entre puntos.",
+                  "Gráfico de barras para visualizar la distribución de una variable categórica.",
+                  "Histograma para visualizar la distribución de una variable numérica continua.",
+                  "Diagrama de caja para visualizar la distribución y los valores atípicos de una variable numérica.",
+                  "Curva suavizada para visualizar tendencias en los datos.")
+)
+
+tipos_geom
+
+```
+
+### Sobre themes
+Es necesario instalar: *ggthemes* usando install.packages("ggthemes")
+```{r}
+temas_ggplot2 <- data.frame(
+  Tema = c("theme_economist", "theme_gray", "theme_bw", "theme_minimal", "theme_classic", "theme_dark", "theme_light", "theme_void")
+)
+
+temas_ggplot2
+
+```
+
+
+## 1. Gráficos de dispersión
+- Un gráfico de dispersión es una representación visual que muestra la relación 
+entre dos variables numéricas. 
+- En un gráfico de dispersión, cada punto en el plano representa una observación 
+en los datos, con una coordenada para cada una de las dos variables. 
+- Este tipo de gráfico es útil para identificar patrones, tendencias, correlaciones 
+y outliers en los datos.
+
+
+La disposición de los puntos en el gráfico de dispersión puede revelar diferentes 
+tipos de relaciones entre las variables:
+
+1. Si los puntos están dispersos aleatoriamente, podría indicar una falta de 
+correlación entre las variables.
+2. Si los puntos siguen una tendencia lineal, podría indicar una correlación 
+positiva o negativa entre las variables.
+3. Si los puntos forman agrupamientos o patrones específicos, podría indicar la 
+presencia de subgrupos dentro de los datos.
+
+
+## Ejemplos
+
+```{r}
+library(ggplot2)
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp))+ geom_point()+ ylab("Expectativa de vida")+ xlab("PBI percápita")+ scale_x_log10()+ theme_classic()+ ggtitle("Relación enre el PBI percápita y la Expectativa de Vida")
+```
+
+### ¿Por qué usar logaritmo?
+
+Distribución sesgada: Si la variable tiene una distribución sesgada hacia la derecha, 
+es decir, hay una gran cantidad de valores bajos y unos pocos valores muy altos, tomar 
+el logaritmo puede ayudar a reducir el sesgo y hacer que la distribución se parezca más 
+a una distribución normal.
+
+Reducción de la varianza: Tomar el logaritmo puede reducir la varianza de la variable, 
+lo que puede ser útil cuando hay una amplia gama de valores. Esto puede ayudar a estabilizar 
+la varianza y hacer que los datos sean más fáciles de manejar y visualizar.
+
+Interpretación más intuitiva: En algunos casos, tomar el logaritmo de una variable 
+puede hacer que los cambios relativos en la variable sean más fáciles de interpretar. 
+Por ejemplo, en el caso del PBI per cápita, los cambios relativos en el logaritmo 
+pueden interpretarse como tasas de crecimiento porcentuales.
+
+
+### Dplyr y ggplot2
+```{r}
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp))+ geom_point()+ylab("Expectativa de vida")+ xlab("PBI percápita")+ scale_x_log10()+ theme_classic()+ ggtitle("Relación enre el PBI percápita y la Expectativa de Vida")
+```
+
+## ¿Cómo agregar dimensiones? 
+
+Tener en cuenta tmb por el ejemplo la población de cada país y en ese caso lo que se podría hacer que los puntos cambien en función de la población (size).
+
+```{r}
+gapminder %>% filter(continent=="Americas") %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, size=pop))+ geom_point()+ylab("Expectativa de vida")+ xlab("PBI percápita")+ scale_x_log10()+ theme_classic()+ ggtitle("Relación enre el PBI percápita y la Expectativa de Vida en América")
+```
+
+Se observa que las personas que tienen una expectativa de vida más alta y un PBI 
+percapita más alto son personas que provinen de países con una población grande.
+
+## ¿Cómo agregar otra dimensión?: Por año
+
+```{r}
+gapminder %>% filter(year==2007) %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, size=pop))+ geom_point()+ylab("Expectativa de vida")+ xlab("PBI percápita")+ scale_x_log10()+ theme_classic()+ ggtitle("Relación enre el PBI percápita y la Expectativa de Vida en el 2007")
+```
+
+## ¿Cómo agregar otra dimensión? Por continentes
+```{r}
+gapminder %>% filter(year==2007) %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, size=pop, col=continent))+ geom_point()+ylab("Expectativa de vida")+ xlab("PBI percápita")+ scale_x_log10()+ theme_classic()+ ggtitle("Relación enre el PBI percápita y la Expectativa de Vida en el 2007")
+```
+
+Se observa que el sesgo que pareciera de población en realidad es de continente
+Pensar en cómo podemos incluir vairables que sean útiles para sacar mayor información y tener un análsis adecuado de los datos. 
+
+## Seguir perfeccionando:
+
+```{r}
+gapminder %>% filter(year==2007) %>% 
+  ggplot(aes(x=gdpPercap, y=lifeExp, size=pop, col=continent))+ geom_point()+ylab("Expectativa de vida")+ xlab("PBI percápita")+ scale_x_log10()+ theme_classic()+ ggtitle("Relación enre el PBI percápita y la Expectativa de Vida en el 2007")+ 
+  labs(size= "Población", col="Continente")
+```
+
+
+## ¿Cómo podemos visualizar todo por años?
+
+
+```{r}
+#install.packages("ggthemes")  
+
+library(gapminder)
+library(ggplot2)
+library(ggthemes)
+
+gapminder %>%
+  ggplot(aes(x = gdpPercap, y = lifeExp, size = pop, col = continent)) +
+  geom_point() +
+  ylab("Expectativa de vida") +
+  xlab("PBI per cápita") +
+  scale_x_log10() +
+  theme_economist() +  # Aplicar el tema economist
+  facet_wrap(~year) +
+  ggtitle("Relación entre el PBI per cápita y la Expectativa de Vida desde 1952-2007") +
+  labs(size = "Población", col = "Continente")
+
+```
+
+
+Resumen de las capas añadidas: 
+
+Dimensiones:
+1.Eje de las X
+1.Eje de las Y
+1.Tamaño de los puntos
+1. Organización por el color de los puntos
+1. Organización por los años
+
+## Otros gráfricos de dispersión: agragando una línea
+
+```{r}
+library(ggthemes)
+gapminder %>% filter(continent=="Asia") %>% 
+   group_by(year)%>%
+  summarise(mean_lifeExp=mean(lifeExp, na.rm=T))%>% 
+  ggplot(aes(x=year, y=mean_lifeExp))+ geom_point()+ylab("Expectativa de vida")+ xlab("Años")+ theme_classic()+ geom_vline(xintercept=1980, linetype= "dotted")+
+geom_line()+theme_economist() + labs(title = "Cambios en la expectativa de vida en Asia",
+                                     subtitle = "Gapminder dataset",
+                                     caption="Fuente: Gapminder-RStudio")
+  
+```
+```{r}
+# Filtrar datos para Asia
+asia_data <- gapminder %>% 
+  filter(continent == "Europe")
+
+# Calcular la expectativa de vida promedio por año
+lifeExp_by_year <- asia_data %>% 
+  group_by(year) %>% 
+  summarise(mean_lifeExp = mean(lifeExp, na.rm = TRUE))
+
+# Crear gráfico de dispersión con línea de tendencia y intervalo de confianza
+ggplot(asia_data, aes(x = year, y = lifeExp)) +
+  geom_point(color = "#1f77b4", alpha = 0.7, size = 3) +
+  geom_smooth(method = "lm", se = TRUE, color = "#ff7f0e") +
+  labs(
+    title = "Expectativa de vida en Europa (1952-2007)",
+    x = "Año",
+    y = "Expectativa de vida",
+    caption = "Datos: Gapminder"
+  ) +
+  scale_x_continuous(breaks = seq(1952, 2007, by = 5)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, hjust = 0.5),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.position = "none"
+  )
+```
+
+## 2. Gráfico de cajas: Boxplot 
+
+
+```{r}
+gapminder %>% filter(continent=="Asia") %>% 
+  mutate(year1=as.factor(year)) %>% 
+  ggplot(aes(x=year1, y=lifeExp, fill=year1))+ geom_boxplot()+ylab("Expectativa de vida")+ xlab("Años")+ theme_economist()+ ggtitle("Boxplot de la expectativa de vida durante los años 1952-2007")
+```
+
+```{r}
+# Filtrar datos para el año más reciente disponible
+gapminder_latest <- gapminder %>% 
+  filter(year == max(year, na.rm = TRUE))
+
+# Crear el boxplot
+ggplot(gapminder_latest, aes(x = continent, y = pop)) +
+  geom_boxplot(fill = "#1f77b4") +  # Personalizar el color de relleno
+  labs(x = "Continente", y = "Población", title = "Boxplot de Población por Continente") +
+  theme_economist()  # Aplicar un tema minimalista al gráfico
+```
+
+
+```{r}
+# Filtrar los datos para la región deseada y los años más reciente y más antiguo
+region <- "Asia"  # Cambiar por la región deseada
+gapminder_region <- gapminder %>% 
+  filter(continent == region) %>%
+  filter(year %in% c(min(year, na.rm = TRUE), max(year, na.rm = TRUE)))
+
+# Crear el boxplot para el año más reciente
+ggplot(gapminder_region, aes(x = as.factor(year), y = pop)) +
+  geom_boxplot(fill = "#1f77b4") +
+  labs(x = "Año", y = "Población", title = paste("Boxplot de Población de", region, "en el año más reciente")) +
+  theme_economist()
+
+```
+
+
+```{r}
+# Crear un vector de colores para cada país
+colores_paises <- c("China" = "#1f77b4",
+                    "India" = "#ff7f0e",
+                    "Indonesia" = "#2ca02c",
+                    "Pakistan" = "#d62728",
+                    "Bangladesh" = "#9467bd",
+                    "Japan" = "#8c564b")
+
+# Filtrar los datos para incluir solo los países de Asia y los países seleccionados
+gapminder_asia_importante <- gapminder %>% 
+  filter(continent == "Asia") %>%
+  filter(country %in% c("China", "India", "Indonesia", "Pakistan", "Bangladesh", "Japan"))
+
+# Crear el boxplot agrupado por país con colores específicos y puntos para valores atípicos
+ggplot(gapminder_asia_importante, aes(x = country, y = pop, fill = country)) +
+  geom_boxplot() +
+  geom_jitter(shape = 1, width = 0.2, alpha = 0.5, color = "black") +  # Agregar puntos para valores atípicos
+  scale_fill_manual(values = colores_paises) +
+  labs(x = "País", y = "Población", title = "Boxplot de Población de Países Asiáticos Importantes") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme_economist()
+
+```
+
+## 3. Gráfico de barras
+Para crear un gráfico de barras (barplot) en R, necesitas al menos dos variables:
+
+1. Variable Categórica (Eje X): Esta variable define las categorías o grupos en 
+el eje horizontal del gráfico de barras. Puede ser una variable nominal o una variable ordinal.
+
+2. Variable Numérica (Eje Y): Esta variable representa la altura o longitud de 
+las barras en el gráfico y se mapea al eje vertical. Debe ser una variable numérica.
+
+```{r}
+
+# Filtrar los datos para un año específico (por ejemplo, 2007)
+gapminder_2007 <- gapminder %>% filter(year == 2007)
+
+# Calcular la población total por continente
+poblacion_continentes <- gapminder_2007 %>% 
+  group_by(continent) %>% 
+  summarise(poblacion_total = sum(pop))
+
+# Crear el gráfico de barras
+ggplot(poblacion_continentes, aes(x = reorder(continent, -poblacion_total), y = poblacion_total, fill = continent)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Continente", y = "Población Total", title = "Población Total por Continente en 2007") +
+  theme_economist() +
+  scale_fill_manual(values = c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"))
+
+```
+
+```{r}
+
+# Filtrar los datos para un año específico (por ejemplo, 2007)
+gapminder_2007 <- gapminder %>% filter(year == 2007)
+
+# Ordenar los países por población y tomar los 5 más poblados
+paises_mas_poblados <- gapminder_2007 %>% 
+  arrange(desc(pop)) %>% 
+  head(5)
+
+# Crear el gráfico de barras
+ggplot(paises_mas_poblados, aes(x = reorder(country, -lifeExp), y = lifeExp, fill = country)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  labs(x = "País", y = "Expectativa de Vida (años)", title = "Los 5 Países Más Poblados y su Expectativa de Vida en 2007") +
+  theme_economist() +
+  scale_fill_viridis_d()
+
+```
+
+
+
+## 4. Histogramas
+
+- Un histograma es una representación visual de la distribución de una variable numérica.
+- Consiste en barras que muestran la frecuencia o densidad de ocurrencia de los valores dentro de diferentes intervalos de la variable.
+
+Requisitos para los histogramas:
+
+1. Datos numéricos: Los datos deben ser valores numéricos para que el histograma pueda representar la distribución.
+2. Escala adecuada: Seleccionar una escala adecuada para el eje y (frecuencia o densidad) dependiendo del propósito del análisis.
+3. Interpretación: Es importante interpretar correctamente el histograma, prestando atención a la forma de la distribución (simétrica, sesgada, etc.) y cualquier tendencia o patrón observado.
+
+
+```{r}
+# Filtrar los datos para incluir solo un año específico
+gapminder_2007 <- gapminder %>% filter(year == 2007)
+
+# Crear un histograma de la expectativa de vida
+ggplot(gapminder_2007, aes(x = lifeExp)) +
+  geom_histogram(fill = "#1f77b4", color = "black", bins = 30) +
+  labs(x = "Expectativa de vida", y = "Frecuencia", title = "Distribución de la Expectativa de Vida en 2007") +
+  theme_economist()
+```
+
+```{r}
+# Filtrar los datos para incluir solo un continente específico y eliminar NA en gdpPercap
+gapminder_asia <- gapminder %>%
+  filter(continent == "Europe", !is.na(gdpPercap))
+
+# Crear un histograma del PIB per cápita
+ggplot(gapminder_asia, aes(x = gdpPercap)) +
+  geom_histogram(fill = "#1f77b4", color = "black", bins = 30) +
+  labs(x = "PIB per cápita", y = "Frecuencia", title = "Distribución del PIB per cápita en Asia") +
+  theme_economist()
+
+```
+
+## 5. Gráfico de línea
+
+Un gráfico de línea es una representación visual que muestra la relación entre 
+dos variables a lo largo del tiempo o de un rango continuo de valores. Se utiliza 
+comúnmente para visualizar tendencias, patrones o cambios en datos a lo largo de 
+una dimensión temporal o continua.
+
+Requisitos:
+
+1. Datos: Se requiere un conjunto de datos que contenga al menos dos variables, 
+una de las cuales se utilizará como eje x (por ejemplo, el tiempo) y la otra como 
+eje y (por ejemplo, valores numéricos).
+2. Variables numéricas o fechas: Las variables en los ejes x e y deben ser numéricas 
+o fechas para que el gráfico de línea sea efectivo.
+3. Ordenación: Los datos deben estar ordenados adecuadamente en función de la variable 
+en el eje x para que el gráfico muestre una secuencia temporal o una progresión lógica 
+de valores.
+Interpretación clara: Es importante que el gráfico de línea tenga una leyenda clara, 
+etiquetas de ejes informativas y un título descriptivo para facilitar la interpretación 
+de los datos.
+
+```{r}
+
+# Filtrar datos para un país específico (por ejemplo, China)
+datos_china <- gapminder %>%
+  filter(country == "China")
+
+# Gráfico de línea de la expectativa de vida en China a lo largo del tiempo
+ggplot(datos_china, aes(x = year, y = lifeExp)) +
+  geom_line(color = "#1f77b4") +
+  labs(x = "Año", y = "Expectativa de Vida", title = "Evolución de la Expectativa de Vida en China") +
+  theme_minimal()
+
+```
+
+# Introducción a la visualización de datos espaciales
+
+## Importación y Manipulación de Datos Espaciales
+
+Para abordar la importación y manipulación de datos espaciales y la creación de mapas en R, podemos utilizar la librería sf junto con alguna base de datos espaciales disponible en R o en un paquete adicional. Una excelente base de datos para este propósito es nc (North Carolina dataset), que viene con el paquete sf. Este conjunto de datos contiene información geográfica y demográfica del estado de North Carolina, EE.UU., y es un excelente recurso para demostrar cómo trabajar con datos espaciales en R.
+
+Primero, vamos a cargar y manipular el conjunto de datos nc usando sf. Esta parte demostrará cómo importar datos espaciales y realizar una operación básica de manipulación.
+
+```{r}
+library(sf)
+
+# Cargando el conjunto de datos 'nc' de North Carolina directamente
+nc_path <- system.file("shape/nc.shp", package = "sf")
+nc <- st_read(nc_path)
+
+# Visualizar la estructura de los datos espaciales
+print(st_geometry_type(nc))
+print(head(nc))
+
+```
+
+
+## Creación de Mapas con ggplot2
+Una vez que tenemos nuestros datos espaciales listos, podemos crear un mapa básico utilizando ggplot2. En este ejemplo, haremos un mapa que muestra los condados de North Carolina.
+
+```{r}
+library(ggplot2)
+
+# Crear un mapa básico de North Carolina
+ggplot(data = nc) +
+  geom_sf(aes(fill = AREA)) + # Colorear los condados según su área
+  labs(title = "Mapa de North Carolina por Área de Condados",
+       fill = "Área") +
+  theme_minimal()
+
+```
+
+Además de los datos de North Carolina (nc), usaremos también el conjunto de datos world del paquete rnaturalearth para mostrar cómo crear varios tipos de mapas, incluyendo mapas temáticos y mapas interactivos.
+
+## Preparación
+Primero, asegurémonos de tener todo lo necesario:
+
+```{r}
+# Instalar paquetes si es necesario
+if (!requireNamespace("sf", quietly = TRUE)) install.packages("sf")
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+if (!requireNamespace("rnaturalearth", quietly = TRUE)) install.packages("rnaturalearth")
+if (!requireNamespace("rnaturalearthdata", quietly = TRUE)) install.packages("rnaturalearthdata")
+if (!requireNamespace("plotly", quietly = TRUE)) install.packages("plotly")
+
+# Cargar paquetes
+library(sf)
+library(ggplot2)
+library(rnaturalearth)
+library(plotly)
+
+# Cargar datos
+data(nc, package = "sf")
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+```
+
+## Mapa Básico con ggplot2
+Vamos a empezar con un mapa básico del mundo:
+
+```{r}
+ggplot(data = world) +
+  geom_sf() +
+  labs(title = "Mapa Mundial Básico") +
+  theme_minimal()
+
+```
+
+## Mapa Temático
+Ahora, crearemos un mapa temático del mundo, coloreando los países según su PIB per cápita. Para este ejemplo, necesitaríamos integrar los datos del PIB per cápita al conjunto de datos world. Simularemos esta integración con valores aleatorios para fines demostrativos:
+
+```{r}
+# Simular datos del PIB per cápita
+set.seed(123) # Para reproducibilidad
+world$gdpPercap <- runif(nrow(world), 500, 60000)
+
+# Crear un mapa coloreando los países según el PIB per cápita
+ggplot(data = world) +
+  geom_sf(aes(fill = gdpPercap)) +
+  scale_fill_viridis_c() +
+  labs(title = "Mapa Mundial por PIB per cápita Simulado", fill = "PIB per cápita") +
+  theme_minimal()
+```
+
+## Mapa Interactivo con plotly
+
+Para crear un mapa interactivo, convertiremos un gráfico ggplot2 a una versión interactiva con plotly:
+
+```{r}
+p <- ggplot(data = world) +
+  geom_sf(aes(fill = gdpPercap)) +
+  labs(title = "Mapa Mundial Interactivo por PIB per cápita", fill = "PIB per cápita")
+
+# Convertir a plotly para interactividad
+ggplotly(p)
+
+```
+
+FIN
+## 
