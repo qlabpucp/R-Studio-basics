@@ -43,6 +43,6 @@ Para ello, es importante que descarguen R y RStudio en sus laptops y/o PCs para 
 
 ### Alexander Noblejas
 - **Correo:** [alexander.noblejas@pucp.edu.pe](alexander.noblejas@pucp.edu.pe)
-- **Perfil GitHub:** [![GitHub](https://img.shields.io/badge/-GitHub-black?style=flat-square&logo=github)]()
+- **Perfil GitHub:** [![GitHub](https://img.shields.io/badge/-GitHub-black?style=flat-square&logo=github)](https://github.com/AlexNoblejas)
 
 
