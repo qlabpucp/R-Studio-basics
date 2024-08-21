@@ -27,12 +27,12 @@ Para ello, es importante que descarguen R y RStudio en sus laptops y/o PCs para 
 - **📊 Datasets:** Contiene las bases de datos a ser utilizadas durante el taller.
 
 ## 📆 Clases
-🔗 **Link para las sesiones sincrónicas:** [¡Haz clic aquí para unirte!]() 
+🔗 **Link para las sesiones sincrónicas:** [¡Haz clic aquí para unirte!](https://pucp.zoom.us/j/97199273094?pwd=DL6zJnAXsbIeah7ioRB51xXaJDmrKU.1) 
 
 - **Meeting ID:** 951 3762 4987
   
 ## 🎥 Grabaciones
-🎥 **Grabaciones en YouTube:** [¡Haz clic aquí para ver la lista de reproducción!]()
+🎥 **Grabaciones en YouTube:** [¡Haz clic aquí para ver la lista de reproducción!](https://youtu.be/Ef_NRrffd0A)
 
 
 ## 👨‍🏫 Instructores
