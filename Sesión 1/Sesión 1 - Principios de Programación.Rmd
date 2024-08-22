@@ -742,3 +742,267 @@ Hemos aprendido acerca de:
 -   Tipos y estructuras de datos
 -   Operaciones, propiedades y funciones
 -   Introducción a los dataframes
+
+
+## Instalación de paquetes
+
+En R, los paquetes se pueden instalar utilizando la función *install.packages()*. 
+Por ejemplo:
+
+```{r}
+# install.packages("tidyverse")
+# install.packages("openxlsx")
+# install.packages("rio")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("data.table")
+# install.packages("DescTools")
+# install.packages("readxl")
+# install.packages("readr")
+# install.packages("reshape2")
+# install.packages("MASS")
+# install.packages("car")
+# install.packages("forecast")
+# install.packages("psych")
+# install.packages("pacman")
+# install.packages("foreign") #Abrir base de datos (usa un punto)
+# install.packages("haven") #Abrir base de datos (usa un _)
+```
+
+```{r}
+# Cargar múltiples paquetes y llamar a las librerías
+library(pacman)
+p_load(tidyverse, DescTools, foreign, dplyr, haven, openxlsx, jsonlite)
+```
+
+Llamar a las funciones de las librerías:
+*paquete::función*
+
+## Importar bases de datos 
+
+### Archivo Excel (XLSX):
+
+Función: read_excel() del paquete readxl.
+Ejemplo: readxl::read_excel("archivo.xlsx")
+
+```{r}
+readxl::read_excel("Data EconoFreedom.xlsx")
+```
+
+
+
+### Archivo de valores separados por comas (CSV):
+
+Función: read_csv() del paquete readr (parte de tidyverse).
+Ejemplo: readr::read_csv("archivo.csv")
+```{r}
+readr::read_csv("Data_forcats.csv")
+```
+
+
+### Archivo de valores separados por tabulaciones (TSV):
+
+Función: read_tsv() del paquete readr (parte de tidyverse).
+Ejemplo: readr::read_tsv("archivo.tsv")
+
+### Archivo de datos de Stata (DTA):
+
+Función: read_dta() del paquete haven.
+Ejemplo: haven::read_dta("archivo.dta")
+```{r}
+haven::read_dta("card.dta")
+```
+
+
+### Archivo de datos de SPSS (SAV):
+
+Función: read_sav() del paquete haven.
+Ejemplo: haven::read_sav("archivo.sav")
+```{r}
+haven::read_sav("sub_lapop.sav")
+```
+
+
+### Archivo JSON (JavaScript Object Notation):
+
+Función: fromJSON() del paquete jsonlite.
+Ejemplo: jsonlite::fromJSON("archivo.json")
+
+### Archivo XML (Extensible Markup Language):
+
+Función: xml2::read_xml() del paquete xml2.
+Ejemplo: xml2::read_xml("archivo.xml")
+
+### Archivo de texto plano (TXT):
+
+Función: readLines() para leer líneas de texto en un vector.
+Ejemplo: readLines("archivo.txt")
+
+
+### Archivo DBF
+Función read.dbf() del paquete foreign
+Ejemplo: read.dbf("archivo.dbf")
+
+## Sobre el paquete rio
+El paquete rio es particularmente útil porque:
+
+Interfaz unificada: Proporciona una sola función, import() y export(), que puede 
+manejar múltiples tipos de formatos de archivo. Esto simplifica el proceso de 
+importación y exportación, ya que no tienes que recordar diferentes funciones 
+para cada formato.
+
+Soporte para múltiples formatos: rio puede manejar una variedad de formatos de 
+archivo, incluyendo CSV, XLSX, SPSS, Stata, SAS, JSON, y más. Esto lo hace muy 
+versátil y conveniente para trabajar con diferentes tipos de datos.
+
+## Exportar bases de datos 
+
+### Cargar la base de datos (por ejemplo, mtcars)
+
+```{r}
+#install.packages("mtcars")
+data_1 <- mtcars
+```
+
+```{r}
+library(expss)
+data_1 = apply_labels(data_1,
+                      mpg = "Miles/(US) gallon",
+                      cyl = "Number of cylinders",
+                      disp = "Displacement (cu.in.)",
+                      hp = "Gross horsepower",
+                      drat = "Rear axle ratio",
+                      wt = "Weight (1000 lbs)",
+                      qsec = "1/4 mile time",
+                      vs = "Engine",
+                      vs = c("V-engine" = 0,
+                             "Straight engine" = 1),
+                      am = "Transmission",
+                      am = c("Automatic" = 0,
+                             "Manual"=1),
+                      gear = "Number of forward gears",
+                      carb = "Number of carburetors"
+)
+```
+
+
+
+### Exportar la base de datos a diferentes formatos
+
+```{r}
+write.csv(data_1, "mtcars.csv", row.names = FALSE)
+write.xlsx(data_1, "mtcars.xlsx")
+write.dta(data_1, "mtcars.dta")
+write_sav(data_1, "mtcars.sav")
+write_json(data_1, "mtcars.json")
+```
+
+
+
+## Base de datos para esta clase: WDI
+- El Banco Mundial(WDI) proporciona datos abiertos para cientos de indicadores económicos y sociales de una amplia gama de países en todo el mundo. Estos indicadores están disponibles para la mayoría de los países y abarcan muchos años. Puede obtener más información en 
+https://data.worldbank.org/
+
+
+### Buscar variables 
+```{r}
+library(WDI)
+WDIsearch(string = "maternal mortality ratio",
+          field = "name",
+          short = FALSE)
+```
+
+## Selección de variables
+
+```{r}
+example <- WDI(indicator =c("EN.ATM.CO2E.PC" , "NY.GDP.PCAP.CD"), extra=TRUE)
+```
+
+```{r}
+df <- data.frame(
+WDI( country = c("US", "DE", "NG", "BR"),
+    indicator = c("NY.GDP.PCAP.CD", "SP.DYN.LE00.IN", "SP.POP.TOTL", "SH.STA.MMRT"),
+    start = 2005,
+    end = 2015,
+    extra = FALSE))
+
+# Filtrar los datos para eliminar filas con valores NA
+df <- na.omit(df)
+```
+
+
+### Variables específicas:
+
+a. NY.GDP.PCAP.CD:
+
+Nombre completo: GDP per capita (current US$)
+Descripción: El Producto Interno Bruto (PIB) per cápita es una medida del ingreso 
+promedio por persona en un país en un año determinado, expresado en dólares 
+estadounidenses corrientes.
+Uso común: El PIB per cápita se utiliza para comparar el nivel de desarrollo 
+económico entre países y a lo largo del tiempo.
+
+b. SP.DYN.LE00.IN:
+
+Nombre completo: Life expectancy at birth, total (years)
+Descripción: La esperanza de vida al nacer es el número promedio de años que se 
+espera que viva una persona al nacer, basado en las tasas de mortalidad actuales.
+Uso común: La esperanza de vida al nacer es un indicador importante del nivel de 
+salud y bienestar de la población de un país.
+
+
+c. SP.POP.TOTL:
+
+Nombre completo: Population, total
+Descripción: La población total es la cantidad total de personas que residen en 
+un país en un momento dado.
+Uso común: La población total es un indicador clave para comprender el tamaño y 
+la composición de la población de un país, así como para realizar proyecciones 
+demográficas y planificación de políticas.
+
+
+d. SH.STA.MMRT:
+
+Nombre completo: Mortality rate, maternal (per 100,000 live births)
+Descripción: La tasa de mortalidad materna es el número de muertes maternas relacionadas 
+con el embarazo, el parto y el puerperio en un año determinado, por cada 100,000 nacidos 
+vivos en el mismo año.
+
+Uso común: La tasa de mortalidad materna es un indicador crítico de la salud materna 
+y reproductiva de una población, y es un objetivo importante para la mejora de la 
+salud pública y la atención médica.
+
+
+## Configurar
+
+Data frame: example
+```{r}
+# Cambiar el nombre de la variable "EN.ATM.CO2E.PC" a "CO2"
+names(example)[names(example) == "EN.ATM.CO2E.PC"] <- "CO2"
+
+# Cambiar el nombre de la variable "NY.GDP.PCAP.CD" a "GDP_per"
+names(example)[names(example) == "NY.GDP.PCAP.CD"] <- "GDP_per"
+
+```
+
+Data frame: df
+```{r}
+names(df)[names(df) == "NY.GDP.PCAP.CD"] <- "GDP_per"
+names(df)[names(df) == "SP.DYN.LE00.IN"] <- "LIFE_exp"
+names(df)[names(df) == "SP.POP.TOTL"] <- "Population"
+names(df)[names(df) == "SH.STA.MMRT"] <- "Mother_mortality"
+```
+
+```{r}
+library(expss)
+use_labels(example, plot(CO2~GDP_per))
+```
+
+
+## Antes de empezar
+
+Explorar de manera general:
+```{r}
+summary(df)
+summary(example)
+```
