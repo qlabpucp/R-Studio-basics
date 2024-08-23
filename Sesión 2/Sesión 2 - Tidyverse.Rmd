@@ -338,36 +338,55 @@ library(dbplyr)
 library(WDI) #instalar previamente install.packages("WDI)
 ```
 
-### Búsqueda de indicadores
-```{r}
-library(WDI)
-WDIsearch(string = "gender",
-          field = "name",
-          short = T)
-
-```
-
-### Creación de un data frame
-```{r}
-data_3 <- WDI(indicator=c("SE.XPD.TOTL.GD.ZS"), extra=T)
-```
-
-```{r}
-data_2 <- WDI(indicator=c("SL.IND.EMPL.FE.ZS", "SL.AGR.EMPL.FE.ZS"), extra=T)
-```
-
+## Usaremos indicadores medio ambientales
 ```{r}
 data <- WDI(indicator =c("AG.CON.FERT.ZS", "AG.PRD.CREL.MT", "AG.LND.FRST.ZS", "EN.ATM.CO2E.KT", "EG.ELC.ACCS.ZS","SP.POP.TOTL", "NY.GDP.PCAP.CD", "SP.DYN.LE00.IN"), start = 2005,
     end = 2015,extra=TRUE)
-
 ```
+
+**Descripción**
+
+1. AG.CON.FERT.ZS - Fertilizer consumption (kilograms per hectare of arable land)
+Este indicador mide la cantidad de fertilizantes consumidos por hectárea de tierra arable en un país. 
+Los fertilizantes pueden incluir productos químicos como nitrógeno, fósforo y potasio, y son utilizados 
+para mejorar el rendimiento de los cultivos.
+
+2. AG.PRD.CREL.MT - Cereal production (metric tons)
+Mide la producción total de cereales en un país, expresada en toneladas métricas. Los cereales incluyen 
+productos como trigo, maíz, arroz y cebada. Este indicador es clave para evaluar la seguridad alimentaria 
+y la producción agrícola.
+
+3. AG.LND.FRST.ZS - Forest area (% of land area)
+Representa el porcentaje del área total de un país que está cubierta por bosques. Este indicador es importante 
+para evaluar la sostenibilidad ambiental y la biodiversidad.
+
+4. EN.ATM.CO2E.KT - CO2 emissions (kt)
+Mide las emisiones totales de dióxido de carbono (CO2) en kilotoneladas. Este indicador es fundamental para 
+evaluar la huella de carbono de un país y su contribución al cambio climático.
+
+5. EG.ELC.ACCS.ZS - Access to electricity (% of population)
+Indica el porcentaje de la población que tiene acceso a electricidad en un país. Es un indicador clave para 
+evaluar el desarrollo de infraestructura y la calidad de vida.
+
+6. SP.POP.TOTL - Population, total
+Representa el número total de personas en un país. Es un indicador básico para diversas estadísticas económicas 
+y sociales.
+
+7. NY.GDP.PCAP.CD - GDP per capita (current US$)
+Mide el Producto Interno Bruto (PIB) per cápita en términos de dólares estadounidenses corrientes. Este indicador 
+proporciona una medida del nivel promedio de ingresos de los residentes de un país.
+
+8. SP.DYN.LE00.IN - Life expectancy at birth, total (years)
+Indica la esperanza de vida al nacer para ambos sexos. Es un importante indicador de salud y desarrollo y refleja 
+la calidad general de vida y las condiciones sanitarias en un país.
 
 ```{r}
 str(data)
 ```
 
+# Configuración: transformación al tipo de variable que le corresponde
+se puede usar: as.numeric, as.character, as.factor según corresponda
 ```{r}
-#Configuración:
 data$country <- as.factor(data$country)
 data$region <- as.factor(data$region)
 data$capital <- as.factor(data$capital)
@@ -381,7 +400,6 @@ data[c("country", "region", "capital", "income")] <- lapply(data[c("country", "r
 
 ## Filter
 Esta función se utiliza para filtrar filas de un conjunto de datos en función de condiciones específicas. 
-
 
 ```{r}
 data_1 <- data %>% 
