@@ -32,7 +32,7 @@ Para ello, es importante que descarguen R y RStudio en sus laptops y/o PCs para 
 - **Meeting ID:** 951 3762 4987
   
 ## 🎥 Grabaciones
-🎥 **Grabaciones en YouTube:** [¡Haz clic aquí para ver la lista de reproducción!](https://youtu.be/Ef_NRrffd0A)
+🎥 **Grabaciones en YouTube:** [¡Haz clic aquí para ver la lista de reproducción!](https://www.youtube.com/playlist?list=PLqq4bX-XIg37k2QRa4Z1mJ2zgAP2H7bVX)
 
 
 ## 👨‍🏫 Instructores
