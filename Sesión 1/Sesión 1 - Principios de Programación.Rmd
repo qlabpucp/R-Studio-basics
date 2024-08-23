@@ -23,8 +23,6 @@ Contenidos:
 -   Operadores y tipos de datos
 -   Estructuras de datos en R: vectores listas, matrices y data frames
 -   Instalación de paquetes y manejo de funciones
--   Importar bases de datos
--   Estadística descriptiva
 
 ## Conceptos básicos de programación en R
 
