@@ -16,7 +16,7 @@ Contenidos de la sesión
 Manipulación de datos:
 
 - Instalación de paquetes y funciones 
-- Uso del pipe: %>% o |>
+- Uso del pipe: %>% o |> con ctrl + shift + m 
 - Funciones básicas: selección (select), filtrado (filter), ordenar
 (arrange) y resumen (summarize)
 - Función configuración: crear variables (mutate) y renombrar
@@ -290,12 +290,6 @@ names(df)[names(df) == "SP.POP.TOTL"] <- "Population"
 names(df)[names(df) == "SH.STA.MMRT"] <- "Mother_mortality"
 ```
 
-```{r}
-library(expss)
-use_labels(example, plot(CO2~GDP_per))
-```
-
-
 
 ## ¿Qué es Tidyverse?
 
@@ -341,10 +335,7 @@ knitr::include_graphics("Imagenes/start.jpg")
 ```{r}
 library(tidyverse)
 library(dbplyr)
-```
-
-```{r}
-pacman::p_load(dplyr, ggplot2, tidyr, purr, knitr)
+library(WDI) #instalar previamente install.packages("WDI)
 ```
 
 ### Búsqueda de indicadores
@@ -361,11 +352,9 @@ WDIsearch(string = "gender",
 data_3 <- WDI(indicator=c("SE.XPD.TOTL.GD.ZS"), extra=T)
 ```
 
-
 ```{r}
 data_2 <- WDI(indicator=c("SL.IND.EMPL.FE.ZS", "SL.AGR.EMPL.FE.ZS"), extra=T)
 ```
-
 
 ```{r}
 data <- WDI(indicator =c("AG.CON.FERT.ZS", "AG.PRD.CREL.MT", "AG.LND.FRST.ZS", "EN.ATM.CO2E.KT", "EG.ELC.ACCS.ZS","SP.POP.TOTL", "NY.GDP.PCAP.CD", "SP.DYN.LE00.IN"), start = 2005,
@@ -376,7 +365,6 @@ data <- WDI(indicator =c("AG.CON.FERT.ZS", "AG.PRD.CREL.MT", "AG.LND.FRST.ZS", "
 ```{r}
 str(data)
 ```
-
 
 ```{r}
 #Configuración:
@@ -464,17 +452,27 @@ Select:Se utiliza para seleccionar columnas específicas de un conjunto de datos
 Arrange: Permite ordenar filas de un conjunto de datos en función de una o más variables.
 Count: Contar el número de ocurrencias de cada combinación de valores en una o más columnas.
 ```{r}
-data_r <- data_1 %>% 
-  select(fertilizante_cons, población, pbi_per) %>% 
-  arrange(desc(pbi_per), población) #orden de manera descendente 
+data_r <- data %>% 
+  select("SP.POP.TOTL", "AG.LND.FRST.ZS", "EN.ATM.CO2E.KT", region, country, year) %>% 
+  arrange(desc("SP.POP.TOTL")) %>%  # Ordenar de manera descendente
+  count(region)  # Contar registros por región
 ```
 
+```{r}
+data_peru <- data %>% 
+filter(country == "Peru") %>%
+  select(1:8, -c(status, lastupdated, iso2c)) %>%
+  rename(
+    fertilizante_cons = "AG.CON.FERT.ZS", 
+    cereal_prod = "AG.PRD.CREL.MT"
+  ) %>% 
+  arrange(fertilizante_cons) # Ordenar de manera ascendente
+```
 
 ## Rename
 Permite cambiar los nombres de las columnas de un conjunto de datos.
 ```{r}
-data %>% #y ctr+shift+m 
-  select(1:8, -c(status, lastupdated,iso2c)) %>%
+data %>% 
   rename(
     fertilizante_cons="AG.CON.FERT.ZS", 
     cereal_prod= "AG.PRD.CREL.MT"
@@ -505,7 +503,7 @@ Permite crear nuevas columnas o modificar columnas existentes en un conjunto de 
 
 Algunas variables interesantes a ser creadas pueden ser:
 
-1. Intensidad de fertilizantes por área de tierra cultivable: Podrías calcular la intensidad de fertilizantes por área de tierra cultivable dividiendo la cantidad de fertilizantes consumidos (fertilizante_cons) por la superficie de tierra cultivable (bosques). Esto podría proporcionar información sobre la eficiencia del uso de fertilizantes en la región.
+1. Intensidad de fertilizantes por área de tierra cultivable: Calcular la intensidad de fertilizantes por área de tierra cultivable dividiendo la cantidad de fertilizantes consumidos (fertilizante_cons) por la superficie de tierra cultivable (bosques). Esto podría proporcionar información sobre la eficiencia del uso de fertilizantes en la región.
 
 ```{r}
 data_1 <- data_1 %>%
