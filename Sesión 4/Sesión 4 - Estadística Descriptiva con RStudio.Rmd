@@ -2,7 +2,7 @@
 ---
 title: "Introducción a la Estadística Descriptiva en R Studio"
 author: "Irinnia Vargas y Alexander Noblejas"
-date: "2024-03-16"
+date: "2024-08-28"
 output: 
   slidy_presentation:
     theme: flatly
