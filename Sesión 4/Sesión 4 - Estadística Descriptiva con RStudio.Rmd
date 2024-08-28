@@ -1,0 +1,515 @@
+
+---
+title: "Introducción a la Estadística Descriptiva en R Studio"
+author: "Irinnia Vargas y Alexander Noblejas"
+date: "2024-03-16"
+output: 
+  slidy_presentation:
+    theme: flatly
+---
+
+## LABORATORIO DE INTELIGENCIA ARTIFICIAL Y MÉTODOS COMPUTACIONALES EN CIENCIAS SOCIALES (QLAB)
+
+### TALLER INTRODUCTORIO DE R 2024-2
+
+### SESIÓN 4
+Contenidos:
+
+- Importar y exportar bases de datos
+- Medidas de tendencia central
+- Medidas de dispersión
+- Medidas de posición
+
+
+### Cargar la base de datos (por ejemplo, mtcars)
+
+```{r}
+data_1 <- mtcars
+```
+
+```{r}
+library(expss)
+data_1 = apply_labels(data_1,
+                      mpg = "Miles/(US) gallon",
+                      cyl = "Number of cylinders",
+                      disp = "Displacement (cu.in.)",
+                      hp = "Gross horsepower",
+                      drat = "Rear axle ratio",
+                      wt = "Weight (1000 lbs)",
+                      qsec = "1/4 mile time",
+                      vs = "Engine",
+                      vs = c("V-engine" = 0,
+                             "Straight engine" = 1),
+                      am = "Transmission",
+                      am = c("Automatic" = 0,
+                             "Manual"=1),
+                      gear = "Number of forward gears",
+                      carb = "Number of carburetors"
+)
+```
+
+```{r}
+str(data_1)
+```
+
+
+```{r}
+library(expss)
+expss::fre(data_1$vs)
+```
+```{r}
+expss::fre(data_1$am)
+```
+```{r}
+summary(data_1$am)
+str(data_1$am)
+```
+
+
+## Base de datos para esta clase: WDI
+- El Banco Mundial(WDI) proporciona datos abiertos para cientos de indicadores económicos y sociales de una amplia gama de países en todo el mundo. Estos indicadores están disponibles para la mayoría de los países y abarcan muchos años. Puede obtener más información en:
+
+https://data.worldbank.org/
+https://cran.r-project.org/web/packages/WDI/index.html
+
+
+### Buscar variables 
+
+```{r}
+library(WDI)
+
+# Obtener la lista completa de indicadores
+indicators_list <- WDIsearch()
+
+# Mostrar las primeras filas de la lista
+head(indicators_list)
+```
+
+
+```{r}
+library(WDI)
+WDIsearch(string = "maternal mortality ratio",
+          field = "name",
+          short = FALSE)
+```
+
+## Selección de variables
+
+```{r}
+example <- WDI(indicator =c("EN.ATM.CO2E.PC" , "NY.GDP.PCAP.CD"), extra=TRUE)
+```
+
+```{r}
+library(WDI)
+
+# Obtener datos del Banco Mundial directamente
+df <- WDI(
+  country = c("US", "DE", "NG", "BR"),
+  indicator = c("NY.GDP.PCAP.CD", "SP.DYN.LE00.IN", "SP.POP.TOTL", "SH.STA.MMRT"),
+  start = 2005,
+  end = 2015,
+  extra = FALSE
+)
+
+# Filtrar los datos para eliminar filas con valores NA
+df <- na.omit(df)
+```
+
+
+### Variables específicas:
+
+a. NY.GDP.PCAP.CD:
+
+Nombre completo: GDP per capita (current US$)
+Descripción: El Producto Interno Bruto (PIB) per cápita es una medida del ingreso promedio por persona en un país en un año determinado, expresado en dólares estadounidenses corrientes.
+Uso común: El PIB per cápita se utiliza para comparar el nivel de desarrollo económico entre países y a lo largo del tiempo.
+
+b. SP.DYN.LE00.IN:
+
+Nombre completo: Life expectancy at birth, total (years)
+Descripción: La esperanza de vida al nacer es el número promedio de años que se espera que viva una persona al nacer, basado en las tasas de mortalidad actuales.
+Uso común: La esperanza de vida al nacer es un indicador importante del nivel de salud y bienestar de la población de un país.
+
+
+c. SP.POP.TOTL:
+
+Nombre completo: Population, total
+Descripción: La población total es la cantidad total de personas que residen en un país en un momento dado.
+Uso común: La población total es un indicador clave para comprender el tamaño y la composición de la población de un país, así como para realizar proyecciones demográficas y planificación de políticas.
+
+
+d. SH.STA.MMRT:
+
+Nombre completo: Mortality rate, maternal (per 100,000 live births)
+Descripción: La tasa de mortalidad materna es el número de muertes maternas relacionadas con el embarazo, el parto y el puerperio en un año determinado, por cada 100,000 nacidos vivos en el mismo año.
+
+Uso común: La tasa de mortalidad materna es un indicador crítico de la salud materna y reproductiva de una población, y es un objetivo importante para la mejora de la salud pública y la atención médica.
+
+
+## Configurar
+
+Data frame: example
+
+```{r}
+class(example)
+```
+
+```{r}
+# Cambiar el nombre de la variable "EN.ATM.CO2E.PC" a "CO2"
+names(example)[names(example) == "EN.ATM.CO2E.PC"] <- "CO2"
+
+# Cambiar el nombre de la variable "NY.GDP.PCAP.CD" a "GDP_per"
+names(example)[names(example) == "NY.GDP.PCAP.CD"] <- "GDP_per"
+```
+
+Data frame: df
+
+```{r}
+class(df)
+```
+
+```{r}
+names(df)[names(df) == "NY.GDP.PCAP.CD"] <- "GDP_per"
+names(df)[names(df) == "SP.DYN.LE00.IN"] <- "LIFE_exp"
+names(df)[names(df) == "SP.POP.TOTL"] <- "Population"
+names(df)[names(df) == "SH.STA.MMRT"] <- "Mother_mortality"
+```
+
+```{r}
+plot(example$CO2 ~ example$GDP_per,
+     xlab = "GDP per capita",
+     ylab = "CO2 Emissions",
+     main = "CO2 Emissions vs GDP per capita")
+```
+```{r}
+plot(example$CO2, example$GDP_per,
+     log = "xy",  # Usar escalas logarítmicas para ambos ejes
+     xlab = " CO2 Emissions (log scale)",
+     ylab = "GDP per Capita (log scale)",
+     main = "GDP per Capita vs CO2 Emissions")
+```
+
+
+## Antes de empezar
+
+Explorar de manera general:
+```{r}
+summary(df)
+summary(example)
+```
+
+## Medidas de Tendencia Central
+
+### Media:
+La media, también conocida como promedio, es la suma de todos los valores en un conjunto de datos dividida por el número total de observaciones. Es una medida sensible a los valores extremos en los datos y se ve afectada por su presencia. Para calcular la media de una variable cuantitativa se usa la función mean. Los argumentos básicos de la función mean son dos y se muestran a continuación.
+
+```{r}
+mean(example$CO2, na.rm = TRUE)
+```
+En el parámetro x se indica la variable de interés para la cual se quiere calcular la media, el parámetro na.rm es un valor lógico que en caso de ser TRUE, significa que se deben remover las observaciones con NA, el valor por defecto para este 
+parámetro es FALSE
+
+
+```{r}
+sapply(split(x=df$Mother_mortality, f=df$country), mean, na.rm = TRUE)
+```
+```{r}
+sapply(split(x=df$Population, f=df$year), mean, na.rm = TRUE)
+```
+
+### Mediana:
+La mediana es el valor que se encuentra en el centro de un conjunto de datos ordenados de manera ascendente. Es menos sensible a los valores extremos que la media y proporciona una medida más robusta de la tendencia central en presencia 
+de valores atípicos Para calcular la mediana de una variable cantitativa se usa la función median. 
+Los argumentos básicos de la función median son dos y se muestran a continuación
+
+```{r}
+median(df$LIFE_exp, na.rm = FALSE)
+```
+El resultado anterior se pudo haber obtenido con la función quantile e indicando 
+que se desea el cuantil 50 así:
+```{r}
+quantile(df$LIFE_exp, probs=0.5)
+```
+```{r}
+sapply(split(x=df$LIFE_exp, f=df$country), median, na.rm = TRUE)
+```
+
+### Moda:
+La moda es el valor que aparece con mayor frecuencia en un conjunto de datos. Puede haber una moda (unimodal), dos modas (bimodal) o más (multimodal). Es útil para describir la característica más común en una distribución, pero puede no 
+ser representativa de la tendencia central en distribuciones sesgadas.
+
+Para calcular la moda de una variable en R, podemos usar la función Mode() del paquete descTools. Sin embargo, la función Mode() no está incluida de forma predeterminada en R, por lo que primero necesitamos instalar y cargar el paquete descTools.
+
+```{r}
+library(DescTools)
+Mode(example$income, na.rm = T)
+```
+```{r}
+library(DescTools)
+library(dplyr)
+
+# Calcular la moda por país
+Moda_country <- example %>%
+  group_by(region) %>%
+  summarise(mode_life_exp = Mode(example$income, na.rm = TRUE))
+
+# Mostrar el resultado
+print(Moda_country)
+```
+
+
+## Medidas de dispersión
+
+### Rango:
+Para calcular el rango de una variable cuantitativa se usa la función range. Los argumentos básicos de la función range son dos y se muestran a continuación:
+```{r}
+range(df$LIFE_exp, na.rm = FALSE)
+```
+En el parámetro x se indica la variable de interés para la cual se quiere calcular el rango, el parámetro na.rm es un valor lógico que en caso de ser TRUE, significa que se deben remover las observaciones con NA, el valor por defecto para este parámetro es FALSE.
+
+La función range entrega el valor mínimo y máximo de la variable que se ingresó, para obtener el valor de rango se debe restar del valor máximo el valor mínimo.
+
+#### Mínimo
+
+```{r}
+min(df$LIFE_exp)
+```
+
+```{r}
+sapply(split(df$LIFE_exp, df$country), min, na.rm = TRUE)
+```
+
+####  Máximo 
+
+```{r}
+max(df$LIFE_exp)
+```
+
+```{r}
+sapply(split(df$LIFE_exp, df$country), max, na.rm = TRUE)
+```
+
+```{r}
+library(dplyr)
+example %>% 
+  group_by(year) %>% 
+  summarise(rango=max(GDP_per, na.rm = TRUE)-min(GDP_per, na.rm = TRUE))
+```
+
+
+### Desviación estándar
+La desviación estándar es una medida de qué tanto se alejan las observaciones xi en relación al promedio y se mide en las mismas unidades de la variable de interés. Existen dos formas de calcular la desviación estándar dependiendo de si estamos trabajando con una muestra o con la población.
+```{r}
+mean(df$Mother_mortality)
+```
+
+```{r}
+sd(df$Mother_mortality, na.rm = T)
+```
+
+
+```{r}
+sapply(split(df$Mother_mortality, df$country), sd, na.rm = TRUE)
+```
+```{r}
+mean(example$CO2, na.rm = TRUE)
+```
+```{r}
+sd(example$CO2, na.rm = T)
+```
+```{r}
+library(ggplot2)
+
+# Calcular la media y la desviación estándar de CO2
+mean_CO2 <- mean(example$CO2, na.rm = TRUE)
+sd_CO2 <- sd(example$CO2, na.rm = TRUE)
+
+# Crear el histograma con la curva de la distribución normal
+ggplot(example, aes(x = CO2)) +
+  geom_histogram(aes(y = ..density..), binwidth = sd_CO2 / 2, fill = "lightblue", color = "black") +
+  stat_function(fun = dnorm, args = list(mean = mean_CO2, sd = sd_CO2), color = "red", size = 1.5) +
+  geom_vline(xintercept = mean_CO2, linetype = "dashed", color = "blue", size = 1) +
+  theme_minimal() +
+  labs(title = "Distribución de Emisiones de CO2 con curva de Gauss",
+       x = "Emisiones de CO2",
+       y = "Densidad")
+```
+
+
+### Varianza 
+La varianza es otra medida de qué tanto se alejan las observaciones xi en relación al promedio y se mide en unidades cuadradas. Existen dos formas de calcular la varianza dependiendo de si estamos trabajando con una muestra o con la población.
+
+La desviación estándar es simplemente la raíz cuadrada de la varianza. Por lo tanto, ambos miden lo mismo (la dispersión de los datos), pero la desviación estándar lo hace en una escala más intuitiva.
+
+Para calcular la varianza muestral de una variable cuantitativa se usa la función var. Los argumentos básicos de la función var son dos y se muestran a continuación:
+
+```{r}
+var(df$GDP_per, na.rm = FALSE)
+```
+
+## Medidas de orden o posición:
+Para obtener cualquier cuantil (cuartiles, deciles y percentiles) se usa la función quantile. Los argumentos básicos de la función quantile son tres y se muestran a continuación.
+
+```{r}
+quantile(df$GDP_per, prob = c(0.25, 0.5, 0.75), na.rm = TRUE)
+```
+
+```{r}
+library(dplyr)
+
+# Calcular los cuantiles de GDP_per por cada país
+quantiles_por_country <- example %>%
+  group_by(country) %>%
+  summarise(
+    "25%" = quantile(GDP_per, probs = 0.25, na.rm = TRUE),
+    "50%" = quantile(GDP_per, probs = 0.5, na.rm = TRUE),
+    "75%" = quantile(GDP_per, probs = 0.75, na.rm = TRUE)
+  )
+
+# Mostrar el resultado
+print(quantiles_por_country)
+```
+
+## Tablas
+
+La función table() se utiliza para crear tablas de contingencia que muestran 
+la frecuencia de ocurrencias de diferentes combinaciones de factores en un conjunto 
+de datos. Sin embargo, para calcular estadísticas descriptivas como la media, 
+mediana, mínimo, máximo y desviación estándar, necesitarás utilizar otras funciones 
+como aggregate(), summary(), o prop.table().
+Aquí tienes un ejemplo de cómo generar algunas de las tablas mencionadas 
+utilizando table() y prop.table()
+
+## DF: data_1
+
+1. Tabla de frecuencias de número de cilindros y transmisiones: 
+Puedes usar table() para contar la frecuencia de cada combinación de número de 
+cilindros y tipo de transmisión. Esto te dará una idea de la distribución de los 
+diferentes tipos de automóviles en función del número de cilindros y la transmisión.
+
+```{r}
+tabla_cilindros_transmision <- table(data_1$cyl, data_1$am)
+print(tabla_cilindros_transmision)
+```
+- Para los autos con 4 cilindros, hay 3 con transmisión automática y 8 con transmisión manual.
+- Para los autos con 6 cilindros, hay 4 con transmisión automática y 3 con transmisión manual.
+- Para los autos con 8 cilindros, hay 12 con transmisión automática y 2 con transmisión manual.
+
+2. Tabla de frecuencias de número de cilindros y tipo de carburo: 
+Frecuencia de cada combinación de número de cilindros y tipo de carburo.
+```{r}
+tabla_cilindros_carburo <- table(data_1$cyl, data_1$carb)
+print(tabla_cilindros_carburo)
+```
+- Para los autos con 4 cilindros, hay 5 autos con 1 carburador, 6 con 2 carburadores, y así sucesivamente.
+- Para los autos con 6 cilindros, hay 2 autos con 2 carburadores, 4 con 4 carburadores, 1 con 6 carburadores, y así sucesivamente.
+- Para los autos con 8 cilindros, hay 4 autos con 2 carburadores, 3 con 3 carburadores, 6 con 4 carburadores, 1 con 8 carburadores, y así sucesivamente.
+
+3. Tabla de frecuencias de tipo de transmisión: Puedes usar table() para contar la 
+frecuencia de cada tipo de transmisión (manual o automática).
+```{r}
+tabla_transmision <- table(mtcars$am)
+print(tabla_transmision)
+```
+```{r}
+prop_tabla_transmision <- prop.table(tabla_transmision)
+print(prop_tabla_transmision)
+```
+
+## Df: example
+
+```{r}
+# Tabla de resumen de emisiones de CO2 por región
+tabla_co2_region <- table(example$region, cut(example$CO2, breaks = 5))
+print(tabla_co2_region)
+```
+
+
+El parámetro breaks en la función cut() se utiliza para especificar cómo se deben dividir los datos en intervalos o "cortes". Especifica los puntos de corte que se utilizarán para dividir la variable en intervalos.
+
+## 1. Tabla de resumen de emisiones de CO2 por región
+
+```{r}
+tabla_CO2_region <- aggregate(CO2 ~ region, data = example, FUN = mean) #FUN es la función a aplicar a cada grupo
+tabla_CO2_region
+```
+
+## 2. Tabla de resumen de GDP per cápita por país
+```{r}
+library(dplyr)
+
+# Calcular las estadísticas descriptivas por país
+tabla_GDP_per_capita <- example %>%
+  group_by(country) %>%
+  summarise(
+    mean = mean(GDP_per, na.rm = TRUE),
+    median = median(GDP_per, na.rm = TRUE),
+    min = min(GDP_per, na.rm = TRUE),
+    max = max(GDP_per, na.rm = TRUE),
+    sd = sd(GDP_per, na.rm = TRUE)
+  )
+
+# Mostrar las primeras filas
+head(tabla_GDP_per_capita)
+```
+
+
+## 4. Tabla de correlación entre variables
+```{r}
+tabla_correlacion <- cor(example[, c("CO2", "GDP_per")], use = "pairwise.complete.obs")
+tabla_correlacion
+```
+```{r}
+tabla_correlacion2 <- cor(df[, c("Population", "GDP_per", "LIFE_exp" )], use = "pairwise.complete.obs")
+tabla_correlacion2
+```
+```{r}
+library(DT)
+# Hacer la tabla interactiva
+datatable(tabla_correlacion2)
+```
+
+
+## 5. Tabla de clasificación de países por emisiones de CO2
+```{r}
+top_emisores_CO2 <- head(example[order(example$CO2, decreasing = TRUE), ], 10)
+top_emisores_CO2
+```
+
+```{r}
+library(dplyr)
+
+top_emisores_CO2 <- example %>%
+  group_by(country) %>%
+  slice_max(order_by = CO2, n = 1) %>%  # Selecciona el año con la mayor emisión de CO2 para cada país
+  ungroup() %>%
+  top_n(10, CO2) %>%  # Selecciona los 10 países con las mayores emisiones de CO2
+  arrange(desc(CO2))  # Ordena de mayor a menor
+
+top_emisores_CO2
+```
+
+
+## 6. Tabla de clasificación de países por GDP per cápita
+```{r}
+top_GDP_per_capita <- head(example[order(example$GDP_per, decreasing = TRUE), ], 10)
+top_GDP_per_capita
+```
+
+```{r}
+library(dplyr)
+
+top_GDP_per_capita <- example %>%
+  group_by(country) %>%
+  slice_max(order_by = GDP_per, n = 1) %>%  # Selecciona el año con la mayor PBI per cápita de CO2 para cada país
+  ungroup() %>%
+  top_n(10, GDP_per) %>%  # Selecciona los 10 países con las mayores valores
+  arrange(desc(GDP_per))  # Ordena de mayor a menor
+
+top_GDP_per_capita
+```
+
+
+
+
+
