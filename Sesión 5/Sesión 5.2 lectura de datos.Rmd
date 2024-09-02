@@ -170,7 +170,7 @@ En la vida real, no siempre nos darán las bases de datos listas para trabajar c
 
 Vamos a ver como extraer tablas que están en una web, es decir no son archivos colgados, sino tablas que han sido dibujadas por el programador. Las tablas de datos en la web pueden ser descargadas con facilidad, si se consigue identificar la ruta hacia ella. Cuando identifiques una tabla que te interesa, usa el botón derecho de tu mouse para inspeccionar el código de la página web. Usa la opción inspección hasta que resalte toda la tabla.
 
-Vamos a extraer la tabla de los resultados del "Democracy Index" por país, de la siguiente dirección: <https://es.wikipedia.org/wiki/Anexo:Pa%C3%ADses_por_%C3%ADndice_de_desarrollo_humano#:~:text=El%20%C3%ADndice%20de%20desarrollo%20humano%20%28IDH%29%20es%20una,acceso%20a%20educaci%C3%B3n%20y%20nivel%20de%20vida%20digno.>
+Vamos a extraer la tabla de los resultados del "Indice de Desarrollo Humano (IDH)" por país, de la siguiente dirección: <https://es.wikipedia.org/wiki/Anexo:Pa%C3%ADses_por_%C3%ADndice_de_desarrollo_humano#:~:text=El%20%C3%ADndice%20de%20desarrollo%20humano%20%28IDH%29%20es%20una,acceso%20a%20educaci%C3%B3n%20y%20nivel%20de%20vida%20digno.>
 
 Estando en esa página usando **GoogleChrome** ubícate en la tabla e inspecciona usando el boton derecho.Debes inspeccionar hasta que se resalte tu tabla. 
 
