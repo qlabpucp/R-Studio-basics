@@ -1,0 +1,352 @@
+---
+title: "Sesión 5.2 Lectura de datos"
+author: "Alexander Noblejas e Irinnia Vargas"
+date: "2024-09-02"
+subtitle: 'Taller introductorio de Rstudio'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Hoy vamos a aprender cómo obtener datos desde internet usando dos métodos: a través de APIs y mediante técnicas de "scraping".
+
+# **1. ¿Cómo usar los APIs?**
+
+*Video sobre qué son las APIs*: <https://www.youtube.com/watch?v=u2Ms34GE14U>
+
+Algunas organizaciones ofrecen sus datos de manera abierta a través de portales en internet. Estos portales permiten acceder a la información usando algo llamado "APIs" (Interfaz de Programación de Aplicaciones). Las APIs son una forma de pedir datos a un servidor a través de internet, permitiéndonos obtener información actualizada en tiempo real o revisar el historial de ciertos datos.
+
+Las APIs hacen que sea más fácil recopilar datos porque nos permiten hacerlo de manera automática y estandarizada. Simplemente, se envía una solicitud ("http request") a la API, y esta nos devuelve los datos en un formato específico, como JSON o XML. En este taller, aprenderemos cómo usar una API para obtener datos en formato JSON.
+
+Lista de enlaces a las páginas con APIs en páginas peruanas:
+
+Senace API: https://datosabiertos.senace.gob.pe/Api/Help
+BCRP Estadísticas API: https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api
+PRONABEC API: https://datosabiertos.pronabec.gob.pe/developer/Api
+
+# **Ejemplo 1**
+
+Vamos a hacer un ejemplo, extrayendo datos del portal "Datos Abiertos" de BCRP Entremos al siguiente link y exploremos el portal brevemente: <https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api>
+
+En la serie "Exportaciones por Departamento (Valores FOB en millones de US$) - (27 series)", podemos encontrar data sobre el valor de las exportaciones por departamento en el Perú entre el año 2005 y el 2021. 
+
+Si le das click a "API paradesarrolladores", te dirigirá a una web que indica cómo hacer uso del API: https://estadisticas.bcrp.gob.pe/estadisticas/series/ayuda/api
+
+Vamos a ejecutar estos pasos en R.
+
++   Lo primero que te sugiere el API es que conozcas la estructura de la consulta mediane el método GET:
+
+https://estadisticas.bcrp.gob.pe/estadisticas/series/api/[códigos de series]/[formato de salida]/[periodo inicial]/[periodo final]/[idioma]
+
+Es la única parte obligatoria de la estructura, se requiere al menos un código de serie y como máximo diez. Las series deben corresponder a una misma frecuencia y los códigos deben estar separados por un guion. 
+
+Ejemplos: 
+https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01270PM 
+https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01288PM-PN01289PM/grafico/2016-1/2022-5/esp 
+https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01288PM-PN01289PM/xml 
+https://estadisticas.bcrp.gob.pe/estadisticas/series/api/PN01288PM-PN01289PM-PN01290PM-PN01291PM
+
++ Luego, te indica que construyas una solicitud (request) para colectar los datos. Procedemos entonces a crear nuestro request. Vamos a crear el link en objetos en función de los componentes mencionados anteriormente. Esto es solo para fines didácticos, en el futuro ustedes pueden armar un link completo en sus notas y utilizarlo como request.
+
+```{r}
+LINK="https://estadisticas.bcrp.gob.pe/estadisticas/series/api/"
+SERIE="RD38085BM-RD38086BM"
+FORMATO="/json"
+PERIODO_INICIAL= "/2005-1" 
+PERIODO_FINAL= "/2021-12"
+IDIOMA= "/esp"
+  
+```
+
+
+Entonces, tu solicitud se arma así:
+
+```{r}
+request=paste0(LINK,SERIE,FORMATO,PERIODO_INICIAL,PERIODO_FINAL,IDIOMA) # La función paste0 la usamos para concatenar todos los elementos sin separador
+request #mirala
+```
+
++ Finalmente, procesamos nuestra respuesta.
+
+R necesita que instales jsonlite para poder interpretar formato JSON y httr para poder navegar en la web; luego de hacerlo, habilítala llamando a la librería. De aquí, ya podrías colectar la data:
+
+```{r}
+#install.packages("httr")
+#install.packages("jsonlite")
+```
+
+```{r}
+library(httr)
+library(jsonlite)
+BCR1 = fromJSON(request) 
+str(BCR1)
+```
+
+```{r}
+# Extraemos los nombres de las series y los valores para cada periodo
+nombres_series <- BCR1$config$series$name
+valores_series <- BCR1$periods$values
+
+# Convertimos la lista de valores en un data frame
+df_valores <- as.data.frame(do.call(rbind, valores_series))
+
+# Asignar los nombres de las series como columnas del data frame
+colnames(df_valores) <- nombres_series
+
+# Añadir los nombres de los periodos como una columna
+df_valores$Periodo <- BCR1$periods$name
+
+# Reordenar para que la columna 'Periodo' sea la primera
+df_valores <- df_valores[, c("Periodo", nombres_series)]
+
+# Mostrar el data frame resultante
+head(df_valores)
+```
+
+```{r}
+str(df_valores)
+```
+# **Ejemplo 2**
+
+El siguiente ejemplo emplearemos el portal de datos abiertos de SENACE: <https://datosabiertos.senace.gob.pe/Api/Help>
+
+Recuerde leer la documentación de esta API: <https://datosabiertos.senace.gob.pe/Api/Manual/Gu%C3%ADa-uso-Portal-datos-abiertos.pdf>
+
+Según la documentación nos señala que las APIs disponibles son las siguientes:
+
+-   datastreams/CarteraProyectos?auth_key={auth_key}
+-   datastreams/ConsultorasAmbientales?auth_key={auth_key}
+-   datastreams/GastoEspecifica?auth_key={auth_key}
+-   datastreams/GastoFuente?auth_key={auth_key}
+-   datastreams/GastoGenerica?auth_key={auth_key}
+-   datastreams/SolicitudAcceso?auth_key={auth_key}
+-   datastreams/Visitas?auth_key={auth_key}
+-   datastreams/Reclamos?auth_key={auth_key}
+
+**Paso 1: Obtenemos y guardamos nuestro API KEY**
+
+Obtenemos nuestra llave, donde indique el API. En este caso debemos colocar nuestros datos y mail. Guardamos esto en un objeto
+
+```{r}
+MI_CLAVE="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFsZXhhbmRlcjA0MTEwMUBnbWFpbC5jb20iLCJuYmYiOjE3MjUzMTIwNTksImV4cCI6MTc1Njg0ODA1OSwiaWF0IjoxNzI1MzEyMDU5fQ.YeaWHmv3m8Y1xqrNBOwYJ0wf_p6gOXyUQYKICG6Ti_c"
+```
+
+**Paso 2: Creamos nuestro request**
+
+Seguimos la estructura de request que nos da la API. Vamos a solicitar información para ver el gasto de esta entidad por específica de gasto.
+
+Procedemos entonces a crear nuestro request.
+
+```{r}
+ENLACE="https://datosabiertos.senace.gob.pe/Api/"
+GUID="datastreams/CarteraProyectos?auth_key={auth_key}"
+request2=paste0(ENLACE,GUID,MI_CLAVE)
+request2
+```
+
+**Paso 3: Procesamos la respuesta**
+
+La documentación API nos señala que la respuesta será en JSON. Podemos usar este request y aplicar fromJSON.
+
+```{r}
+library(jsonlite) 
+SENACE = fromJSON(request) 
+head(SENACE)
+```
+
+Recuerde leer la documentación de la API que vaya utilizar, no todos los casos son iguales.
+
+
+# **2. 'Scraping' tablas de datos**
+
+*Video sobre qué es el scrapping*:  <https://www.youtube.com/watch?v=asmAKBsxI4M>
+
+
+Ahora aprendamos a bajar información programáticamente de las páginas web usando las técnicas de "scraping".
+
+En la vida real, no siempre nos darán las bases de datos listas para trabajar con ella,en muchos casos debemos descargarlas de páginas web y debemos limpiar y ordenar nuestra bbdd.
+
+## Opción 1
+
+Vamos a ver como extraer tablas que están en una web, es decir no son archivos colgados, sino tablas que han sido dibujadas por el programador. Las tablas de datos en la web pueden ser descargadas con facilidad, si se consigue identificar la ruta hacia ella. Cuando identifiques una tabla que te interesa, usa el botón derecho de tu mouse para inspeccionar el código de la página web. Usa la opción inspección hasta que resalte toda la tabla.
+
+Vamos a extraer la tabla de los resultados del "Democracy Index" por país, de la siguiente dirección: <https://es.wikipedia.org/wiki/Anexo:Pa%C3%ADses_por_%C3%ADndice_de_desarrollo_humano#:~:text=El%20%C3%ADndice%20de%20desarrollo%20humano%20%28IDH%29%20es%20una,acceso%20a%20educaci%C3%B3n%20y%20nivel%20de%20vida%20digno.>
+
+Estando en esa página usando **GoogleChrome** ubícate en la tabla e inspecciona usando el boton derecho.Debes inspeccionar hasta que se resalte tu tabla. 
+
+Para extraer nuestra base de datos, utilizamos la función "htmltab":
+
+```{r}
+library(rvest)
+
+link <- "https://es.wikipedia.org/wiki/Anexo:Pa%C3%ADses_por_%C3%ADndice_de_desarrollo_humano#:~:text=El%20%C3%ADndice%20de%20desarrollo%20humano%20%28IDH%29%20es%20una,acceso%20a%20educaci%C3%B3n%20y%20nivel%20de%20vida%20digno."
+webpage <- read_html(link)
+table <- webpage %>% html_node(xpath = "/html/body/div[2]/div/div[3]/main/div[3]/div[3]/div[1]/table[2]") %>% html_table()
+head(table)
+```
+
+Otro ejemplo:
+
+Índice de libertad económica
+
+https://es.wikipedia.org/wiki/%C3%8Dndice_de_Libertad_Econ%C3%B3mica
+
+```{r}
+library(rvest)
+
+# URL de la página web
+link1 <- "https://es.wikipedia.org/wiki/%C3%8Dndice_de_Libertad_Econ%C3%B3mica"
+
+# Leer el HTML de la página
+webpage1 <- read_html(link1)
+
+# Extraer la segunda tabla en la página (ajusta el índice según sea necesario)
+BASE1 <- webpage1 %>% html_node("table:nth-of-type(2)") %>% html_table()
+
+# Mostrar las primeras filas de la tabla
+head(BASE1)
+```
+
+Índice de percepción de corrupción
+
+https://datosmacro.expansion.com/estado/indice-percepcion-corrupcion
+
+```{r}
+library(rvest)
+
+# URL de la página web
+url <- "https://datosmacro.expansion.com/estado/indice-percepcion-corrupcion"
+
+# Leer el HTML de la página
+pagina_web <- read_html(url)
+
+# Extraer la tabla de la página web
+# Ajusta el selector CSS según sea necesario
+tabla <- pagina_web %>% html_node("table") %>% html_table()
+
+# Mostrar las primeras filas de la tabla
+head(tabla)
+```
+
+
+## Opción 2
+
+Vamos a ver otra forma de "scrapear", utilizando el mismo paquete "rvest". Qué pasaría si quisiéramos extraer datos de una página web como esta: <https://www.gob.pe/institucion/rree/funcionarios>
+
+Para estas ocasiones, **rvest** nos sirve.
+
++ Primero, abrimos la libreria y creamos un objeto con el link de la página web. Asimismo, obtenemos el código html de la web, con la función "read_html". Esto lo ponemos dentro de un objeto.
+
+
+```{r}
+library(rvest)
+url="https://www.gob.pe/institucion/rree/funcionarios"
+pagina_web=read_html(url)
+pagina_web
+```
+
++ Para scrapear vamos a requerir obtener la clase CSS de los campos que necesitamos. En términos sencillos, la clase CSS es un código que identifica a uno o varios elementos HTML. 
+
+Esta clase CSS la podemos obtener de la siguiente manera. Comencemos por Nombre
+
++ Hacemos click derecho sobre el renglón del nombre y seleccionamos inspeccionar:
+
++ Luego, automaticamente en la parte derecha se nos abrirán los códigos resaltando el que pertenece a ese espacio, colocamos nuestro mouse por encima de esa linea resaltada del código y se nos aparecerá la clase CSS. Ese código lo escribimos copiamos.
+
+Con ese código, continuamos de la siguiente manera:
+
+```{r}
+css_nombre="h3.text-2xl" # contenemos la clase CSS en un objeto
+nombre_html <- html_nodes(pagina_web,css_nombre) # con html_nodes y html_text, obtenemos el código html que contiene los países
+nombre_texto <- html_text(nombre_html) 
+head(nombre_texto) #vemos los datos
+```
+
+Hacemos lo mismo para el "cargo"
+
+```{r}
+css_cargo="p"
+cargo_html <- html_nodes(pagina_web,css_cargo)
+cargo_texto <- html_text(cargo_html)
+head(cargo_texto)
+```
+Finalmente, armamos la base de datos
+
+```{r}
+dataWS3 <- data.frame(NOMBRE = nombre_texto, CARGO = cargo_texto)
+head(dataWS3)
+```
+
+Hagamos otro ejemplo:
+
+http://www.infoartes.pe/f/formacion-1/talleres-especializacion/  
+
+
+- Creación de objetos
+```{r}
+library(rvest) 
+library(dplyr)
+url="http://www.infoartes.pe/f/formacion-1/talleres-especializacion/page/"
+css_nombre=".item h3 a"
+css_categoria="span.category"
+css_fecha= "span.date"
+final_table = list() 
+```
+
+
+- Construimos la función e iteración
+
+```{r}
+for(i in 1:32) { 
+  webpage <- read_html(paste0(url, i)) 
+  nombre_texto <- webpage %>%
+    html_nodes(css_nombre) %>% 
+    html_text() 
+  categoria_texto <- webpage %>%
+    html_nodes(css_categoria) %>% 
+    html_text() 
+   fecha_texto <- webpage %>%
+    html_nodes(css_fecha) %>% 
+    html_text() 
+
+final_table[[i]] <- data.frame(NOMBRE=nombre_texto, CARTEGORIA=categoria_texto, FECHA =fecha_texto) 
+}
+```
+
+- Conversión a base de datos
+
+```{r}
+BASETALLER = bind_rows(final_table) 
+head(BASETALLER)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
